@@ -40,6 +40,9 @@ export function FileUpload({
         const reader = new FileReader();
         reader.onload = () => setPreview(reader.result as string);
         reader.readAsDataURL(file);
+      } else {
+        // For non-image files (audio, etc.), set preview to file name
+        setPreview(file.name);
       }
 
       setUploading(true);
@@ -88,12 +91,16 @@ export function FileUpload({
     onUploadComplete?.("");
   };
 
+  const isImagePreview = preview && (
+    preview.startsWith("data:image") || 
+    preview.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+  );
+
   return (
     <div className={className}>
       {uploadedUrl && preview ? (
         <div className="relative">
-          {preview.match(/\.(jpg|jpeg|png|gif|webp)$/i) ||
-          preview.startsWith("data:image") ? (
+          {isImagePreview ? (
             <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
               <Image
                 src={preview}
@@ -104,7 +111,13 @@ export function FileUpload({
             </div>
           ) : (
             <div className="p-4 border border-border rounded-lg bg-muted">
-              <p className="text-sm">📎 {uploadedUrl}</p>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🎵</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{preview}</p>
+                  <p className="text-xs text-muted-foreground truncate">{uploadedUrl}</p>
+                </div>
+              </div>
             </div>
           )}
           <button
@@ -135,14 +148,20 @@ export function FileUpload({
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2">
-              <Upload className="h-8 w-8 text-muted-foreground" />
+              {accept?.includes("audio") ? (
+                <span className="text-4xl">🎵</span>
+              ) : (
+                <Upload className="h-8 w-8 text-muted-foreground" />
+              )}
               <p className="text-sm font-medium">
                 {isDragActive
                   ? "Drop file here"
+                  : accept?.includes("audio")
+                  ? "Click to upload audio or drag and drop"
                   : "Click to upload or drag and drop"}
               </p>
               <p className="text-xs text-muted-foreground">
-                Max {maxSize / 1024 / 1024}MB
+                {accept?.includes("audio") ? "MP3, WAV, OGG, FLAC, AAC, M4A" : ""} Max {maxSize / 1024 / 1024}MB
               </p>
             </div>
           )}
