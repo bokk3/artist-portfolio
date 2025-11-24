@@ -4,14 +4,14 @@
 Create the "Music" page to display albums and singles, fetching data from the SQLite database.
 
 ## Tasks
-- [ ] Create `app/music/page.tsx`.
-- [ ] Create a `ReleaseCard` component:
-    - [ ] Use **ShadCN Card** as the base.
-    - [ ] Use **ShadCN AspectRatio** (1:1) for album art.
-    - [ ] Display album artwork and title.
-    - [ ] Add a **ShadCN Button** (Play icon) to start playing in the global player.
-- [ ] Fetch tracks from the database, grouped by album/single.
-- [ ] Implement a grid layout for releases.
-- [ ] Create a detailed view (or expand-in-place) to show the tracklist (use **ShadCN Table** for tracklist).
-- [ ] Use **ShadCN Skeleton** for loading states.
-- [ ] Use **ShadCN HoverCard** for track credits/info.
+- [x] Create `app/music/page.tsx`.
+- [x] Create a `ReleaseCard` component:
+    - [x] Use **ShadCN Card** as the base.
+    - [x] Use **ShadCN AspectRatio** (1:1) for album art.
+    - [x] Display album artwork and title.
+    - [x] Add a **ShadCN Button** (Play icon) to start playing in the global player.
+- [x] Fetch tracks from the database, grouped by album/single.
+- [x] Implement a grid layout for releases.
+- [x] Create a detailed view (or expand-in-place) to show the tracklist (use **ShadCN Table** for tracklist).
+- [x] Use **ShadCN Skeleton** for loading states.
+- [x] Use **ShadCN HoverCard** for track credits/info.
