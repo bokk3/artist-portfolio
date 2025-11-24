@@ -1,12 +1,14 @@
 # Plan 18: Advanced Features
 
 ## Goal
+
 Implement advanced features like analytics and comments.
 
 ## Tasks
-- [ ] Integrate Google Analytics or Vercel Analytics.
-- [ ] Add a comments section to blog posts.
-- [ ] Implement a "Streaming Stats" dashboard in the admin panel:
-    - [ ] Use **ShadCN Card** for stat blocks.
-- [ ] Add a "Dark Mode" toggle (if not already default):
-    - [ ] Use **ShadCN Switch** or **Button**.
+
+- [x] Integrate Google Analytics or Vercel Analytics.
+- [x] Add a comments section to blog posts.
+- [x] Implement a "Streaming Stats" dashboard in the admin panel:
+  - [x] Use **ShadCN Card** for stat blocks.
+- [x] Add a "Dark Mode" toggle (if not already default):
+  - [x] Use **ShadCN Switch** or **Button**.
