@@ -4,12 +4,12 @@
 Implement the public-facing blog section with a card layout and rich text rendering.
 
 ## Tasks
-- [ ] Create `app/blog/page.tsx`.
-- [ ] Create `app/blog/[slug]/page.tsx`.
-- [ ] Create a `BlogCard` component:
-    - [ ] Use **ShadCN Card**.
-    - [ ] Use **ShadCN Badge** for tags.
-- [ ] Implement reading time estimation.
-- [ ] Add social share buttons.
-- [ ] Render rich text content:
-    - [ ] Use Tailwind Typography (`prose`) or custom styles matching the theme.
+- [x] Create `app/blog/page.tsx`.
+- [x] Create `app/blog/[slug]/page.tsx`.
+- [x] Create a `BlogCard` component:
+    - [x] Use **ShadCN Card**.
+    - [x] Use **ShadCN Badge** for tags.
+- [x] Implement reading time estimation.
+- [x] Add social share buttons.
+- [x] Render rich text content:
+    - [x] Use Tailwind Typography (`prose`) or custom styles matching the theme.
