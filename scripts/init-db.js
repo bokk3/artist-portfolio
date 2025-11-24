@@ -1,12 +1,34 @@
+```javascript
 const Database = require("better-sqlite3");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 
-// Ensure db directory exists
+// Ensure db directory exists with proper permissions
 const dbDir = path.join(process.cwd(), "db");
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+
+console.log(`📁 Checking database directory: ${dbDir}`);
+
+try {
+  if (!fs.existsSync(dbDir)) {
+    console.log('📁 Creating db directory...');
+    fs.mkdirSync(dbDir, { recursive: true, mode: 0o755 });
+  }
+  
+  // Test write permissions
+  const testFile = path.join(dbDir, '.write-test');
+  fs.writeFileSync(testFile, 'test');
+  fs.unlinkSync(testFile);
+  console.log('✅ Database directory is writable');
+} catch (error) {
+  console.error('❌ Error with database directory:', error.message);
+  // Attempt to get directory stats only if the directory exists, otherwise statSync will throw an error
+  if (fs.existsSync(dbDir)) {
+    console.error('Directory permissions:', fs.statSync(dbDir));
+  } else {
+    console.error('Directory does not exist or could not be created.');
+  }
+  process.exit(1);
 }
 
 const dbPath = path.join(dbDir, "artist.db");
