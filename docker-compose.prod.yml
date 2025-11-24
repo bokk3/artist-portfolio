@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  artist-portfolio:
+    # Use pre-built image from Docker Hub
+    # Replace '3bok/artist-portfolio' with your actual Docker Hub username/repo
+    image: 3bok/artist-portfolio:latest
+
+    # Optional: specify a particular version tag
+    # image: 3bok/artist-portfolio:1.0.0
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
+
+    environment:
+      # Admin credentials
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@artist.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+
+      # JWT secret for authentication
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-key-in-production}
+
+      # Base URL
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-http://localhost:3000}
+
+      # Node environment
+      - NODE_ENV=production
+
+    volumes:
+      # Database persistence
+      - ./data/db:/app/db
+
+      # File uploads (public directory)
+      - ./data/uploads:/app/public/uploads
+
+    restart: unless-stopped
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    networks:
+      - rein-staging-network
+# Optional: Add a reverse proxy with SSL
+# Uncomment if you want nginx with automatic SSL
+#
+# nginx:
+#   image: nginx:alpine
+#   ports:
+#     - "80:80"
+#     - "443:443"
+#   volumes:
+#     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+#     - ./ssl:/etc/nginx/ssl:ro
+#   depends_on:
+#     - app
+#   restart: unless-stopped
