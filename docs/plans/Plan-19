@@ -1,0 +1,67 @@
+# Plan 19: Missing Features & Enhancements
+
+## Goal
+
+Implement additional features and pages that were identified as missing from the initial 18 plans.
+
+## Tasks
+
+- [x] Create Admin Dashboard (`app/admin/page.tsx`):
+
+  - [x] Overview cards showing total releases, posts, events, subscribers.
+  - [x] Recent activity feed.
+  - [x] Quick stats visualization.
+  - [x] Use **ShadCN Card** for stat blocks.
+
+- [x] Create Contact Page (`app/contact/page.tsx`):
+
+  - [x] Contact form with name, email, subject, message fields.
+  - [x] Use **ShadCN Form** with Zod validation.
+  - [x] Booking inquiry option.
+  - [x] Server action to handle submissions.
+
+- [x] Create Legal Pages:
+
+  - [x] `app/privacy/page.tsx` (Privacy Policy).
+  - [x] `app/terms/page.tsx` (Terms of Service).
+
+- [ ] Add File Upload Functionality:
+
+  - [ ] Create upload API route for images/audio.
+  - [ ] Integrate with admin forms (replace URL inputs).
+  - [ ] Store files in public directory or cloud storage.
+
+- [ ] Add Admin Settings Page (`app/admin/settings/page.tsx`):
+
+  - [ ] Manage social media links.
+  - [ ] Edit about page content.
+  - [ ] Update site metadata.
+  - [ ] Configure general settings.
+
+- [ ] Add Social Sharing:
+
+  - [ ] Share buttons on blog posts (Twitter, Facebook, LinkedIn).
+  - [ ] Share buttons on music releases.
+  - [ ] Copy link functionality.
+
+- [x] Create Press Kit Page (`app/press/page.tsx`):
+
+  - [x] Downloadable press kit (bio, photos, logos).
+  - [x] High-res images for media.
+  - [x] Press contact information.
+
+- [ ] Add Global Search:
+
+  - [ ] Search across music, blog posts, events.
+  - [ ] Use **ShadCN Command** for search UI.
+  - [ ] Implement fuzzy search.
+
+- [ ] Analytics Integration:
+
+  - [ ] Add Google Analytics or Plausible.
+  - [ ] Track page views, music plays, etc.
+
+- [ ] Performance Optimizations:
+  - [ ] Image optimization and lazy loading.
+  - [ ] Code splitting and bundle optimization.
+  - [ ] Implement caching strategies.

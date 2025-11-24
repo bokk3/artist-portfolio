@@ -166,6 +166,17 @@ export function Footer() {
               Terms of Service
             </Link>
           </div>
+          <p className="mt-3 text-xs">
+            Made with ❤️ in Belgium by{" "}
+            <a
+              href="https://truyens.pro"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors font-medium"
+            >
+              truyens.pro
+            </a>
+          </p>
         </div>
       </div>
     </footer>
