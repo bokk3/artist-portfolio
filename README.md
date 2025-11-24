@@ -78,18 +78,23 @@ npm install
 3. **Set up environment variables**
 
 ```bash
-# Copy the example env file
+# Create .env.local file
 cp .env.example .env.local
 
 # Edit .env.local and add your values
+# At minimum, set JWT_SECRET
 ```
 
 4. **Initialize the database**
 
 ```bash
-# Run the database initialization script
-node lib/db-init.js
+npm run db:init
 ```
+
+This will create the SQLite database with all tables and a default admin user:
+
+- Email: `admin@artist.com`
+- Password: `admin123` (⚠️ change this!)
 
 5. **Start development server**
 
@@ -98,6 +103,8 @@ npm run dev
 ```
 
 Visit `http://localhost:3000` to see your site!
+
+📖 **For detailed database setup and Docker deployment, see [docs/DATABASE.md](docs/DATABASE.md)**
 
 ## 🗄️ Database Schema
 

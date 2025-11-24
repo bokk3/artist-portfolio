@@ -1,0 +1,132 @@
+const Database = require("better-sqlite3");
+const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
+
+// Ensure db directory exists
+const dbDir = path.join(process.cwd(), "db");
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const dbPath = path.join(dbDir, "artist.db");
+const db = new Database(dbPath);
+
+// Enable WAL mode for better concurrency
+db.pragma("journal_mode = WAL");
+
+console.log("🗄️  Initializing database...");
+
+// Create tables
+db.exec(`
+  -- Users table
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- Releases table
+  CREATE TABLE IF NOT EXISTS releases (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    artist TEXT NOT NULL,
+    release_date TEXT NOT NULL,
+    cover_image_url TEXT,
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- Tracks table
+  CREATE TABLE IF NOT EXISTS tracks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    release_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    duration INTEGER,
+    audio_url TEXT,
+    waveform_data TEXT,
+    track_number INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (release_id) REFERENCES releases(id) ON DELETE CASCADE
+  );
+
+  -- Posts table
+  CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    content TEXT NOT NULL,
+    excerpt TEXT,
+    cover_image_url TEXT,
+    tags TEXT,
+    published INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- Events table
+  CREATE TABLE IF NOT EXISTS events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    venue TEXT NOT NULL,
+    city TEXT NOT NULL,
+    ticket_url TEXT,
+    status TEXT DEFAULT 'upcoming',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- Videos table
+  CREATE TABLE IF NOT EXISTS videos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    video_url TEXT NOT NULL,
+    thumbnail_url TEXT,
+    platform TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- Gallery table
+  CREATE TABLE IF NOT EXISTS gallery (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    image_url TEXT NOT NULL,
+    caption TEXT,
+    category TEXT DEFAULT 'live',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- Newsletter subscribers table
+  CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE NOT NULL,
+    subscribed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
+console.log("✅ Tables created successfully");
+
+// Create default admin user if none exists
+const bcrypt = require("bcryptjs");
+const adminEmail = process.env.ADMIN_EMAIL || "admin@artist.com";
+const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+
+const existingUser = db
+  .prepare("SELECT * FROM users WHERE email = ?")
+  .get(adminEmail);
+
+if (!existingUser) {
+  const hashedPassword = bcrypt.hashSync(adminPassword, 10);
+  db.prepare("INSERT INTO users (email, password) VALUES (?, ?)").run(
+    adminEmail,
+    hashedPassword
+  );
+  console.log(`✅ Admin user created: ${adminEmail}`);
+  console.log(
+    `⚠️  Default password: ${adminPassword} - CHANGE THIS IN PRODUCTION!`
+  );
+} else {
+  console.log("✅ Admin user already exists");
+}
+
+db.close();
+console.log("🎉 Database initialization complete!");

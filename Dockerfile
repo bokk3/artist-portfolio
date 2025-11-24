@@ -31,6 +31,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Install runtime dependencies for better-sqlite3
+RUN apk add --no-cache libc6-compat
+
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
@@ -39,9 +42,19 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/package.json ./package.json
 
-# Create data directory for SQLite and db directory if needed
+# Install production dependencies (needed for bcryptjs and better-sqlite3)
+RUN npm install --production --ignore-scripts && \
+    npm install better-sqlite3 bcryptjs
+
+# Create data directory for SQLite
 RUN mkdir -p /app/db && chown -R nextjs:nodejs /app/db
+
+# Initialize database as root, then change ownership
+RUN node scripts/init-db.js && \
+    chown -R nextjs:nodejs /app/db
 
 USER nextjs
 
