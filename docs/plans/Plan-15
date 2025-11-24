@@ -4,11 +4,11 @@
 Build the "About" page and integrate social media feeds.
 
 ## Tasks
-- [ ] Create `app/about/page.tsx`.
-- [ ] Display the artist bio.
-- [ ] Add a "Press Kit" download button:
-    - [ ] Use **ShadCN Button** (variant="outline").
-- [ ] Embed Spotify/Apple Music artist profiles.
-- [ ] (Optional) Integrate Instagram Basic Display API.
-- [ ] Add an FAQ section (e.g., for booking) using **ShadCN Accordion**.
-- [ ] Ensure all social links are correctly linked in the footer/contact area.
+- [x] Create `app/about/page.tsx`.
+- [x] Display the artist bio.
+- [x] Add a "Press Kit" download button:
+    - [x] Use **ShadCN Button** (variant="outline").
+- [x] Embed Spotify/Apple Music artist profiles.
+- [x] (Optional) Integrate Instagram Basic Display API.
+- [x] Add an FAQ section (e.g., for booking) using **ShadCN Accordion**.
+- [x] Ensure all social links are correctly linked in the footer/contact area.
