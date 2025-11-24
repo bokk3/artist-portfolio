@@ -4,9 +4,12 @@
 Build the blog management interface with a WYSIWYG editor.
 
 ## Tasks
-- [ ] Install `tiptap` or `lexical` for the rich text editor.
-- [ ] Create `app/admin/blog/page.tsx` (list view) and `app/admin/blog/new/page.tsx` (editor).
-- [ ] Implement the editor with toolbar (bold, italic, headings, links).
+- [ ] Install **TipTap** (core, starter-kit, image extension).
+- [ ] Create `app/admin/blog/page.tsx` (List) and `app/admin/blog/new/page.tsx` (Editor).
+- [ ] Implement the Editor:
+    - [ ] Use **TipTap** for the rich text area.
+    - [ ] Use **ShadCN Button** for toolbar items (Bold, Italic, etc.).
+    - [ ] Use **ShadCN Input** for the post title.
 - [ ] Add image upload functionality within the editor.
 - [ ] Create Server Actions to save/update posts.
-- [ ] Add fields for SEO metadata (title, description) and tags.
+- [ ] Add fields for SEO metadata and tags.

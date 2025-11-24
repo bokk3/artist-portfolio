@@ -7,7 +7,11 @@ Implement a secure, single-user authentication system for the admin panel using 
 - [ ] Install `jose` for JWT handling.
 - [ ] Create `.env.local` and add `ADMIN_PASSWORD` and `JWT_SECRET`.
 - [ ] Create `lib/auth.ts` for session management (encrypt/decrypt JWT).
-- [ ] Create a login page at `/login` with a password form.
+- [ ] Create a login page at `/login`:
+    - [ ] Use **ShadCN Card** for the container.
+    - [ ] Use **ShadCN Form** and **Input** for the password field.
+    - [ ] Use **ShadCN Button** for submission.
+    - [ ] Use **Sonner** for error toasts.
 - [ ] Create a Server Action `loginAction` to verify the password and set a session cookie.
 - [ ] Create middleware to protect `/admin` routes (redirect to `/login` if no session).
-- [ ] Add a logout button/action in the admin layout.
+- [ ] Add a logout button/action in the admin layout (use **ShadCN Button**).

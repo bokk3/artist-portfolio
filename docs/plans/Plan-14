@@ -6,7 +6,12 @@ Create the "Videos" page and admin management for videos.
 ## Tasks
 - [ ] Create `app/videos/page.tsx`.
 - [ ] Create `app/admin/videos/page.tsx`.
-- [ ] Implement a `VideoCard` component with a play overlay.
-- [ ] Create a video player modal that supports YouTube/Vimeo embeds and native HTML5 video.
+- [ ] Implement a `VideoCard` component:
+    - [ ] Use **ShadCN Card**.
+    - [ ] Use **ShadCN AspectRatio** (16:9) for the thumbnail.
+    - [ ] Add a play overlay.
+- [ ] Create a video player modal:
+    - [ ] Use **ShadCN Dialog**.
+    - [ ] Support YouTube/Vimeo embeds and native HTML5 video.
 - [ ] Fetch videos from the database.
 - [ ] Implement video management in the admin panel (add links, upload thumbnails).

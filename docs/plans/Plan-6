@@ -5,8 +5,11 @@ Build the admin interface to upload and manage tracks.
 
 ## Tasks
 - [ ] Create `app/admin/music/page.tsx`.
-- [ ] Implement a file upload component using `react-dropzone` for audio and artwork.
-- [ ] Create a Server Action `uploadTrack` to save files to `/public/uploads` and insert records into the DB.
-- [ ] (Optional) Generate waveform data on the server during upload (using a node library or client-side pre-processing).
-- [ ] Create a data table to list existing tracks with edit/delete options.
-- [ ] Add form fields for metadata: Title, Artist, Album, Genre, BPM.
+- [ ] Implement file upload:
+    - [ ] Wrap `react-dropzone` in a **ShadCN Card**.
+- [ ] Create a data table to list tracks:
+    - [ ] Use **ShadCN Table**.
+    - [ ] Use **ShadCN DropdownMenu** for row actions (Edit, Delete).
+    - [ ] Use **ShadCN Dialog** for delete confirmation.
+- [ ] Create Server Action `uploadTrack` to save files and insert DB records.
+- [ ] Add form fields for metadata (Title, Artist, Album, BPM) using **ShadCN Input** and **Label**.

@@ -10,11 +10,11 @@ Build a stunning, modern music portfolio website that surpasses SoundCloud's des
 - **Runtime**: Node.js 24-alpine
 - **Language**: TypeScript (strict mode)
 - **UI Library**: React 19
-- **Styling**: Tailwind CSS v4 + shadcn/ui
+- **Styling**: Tailwind CSS v4 + shadcn/ui (Mandatory)
 - **Animations**: Framer Motion
 - **Database**: SQLite (better-sqlite3)
-- **Audio**: WaveSurfer.js or Peaks.js
-- **Editor**: TipTap or Lexical
+- **Audio**: WaveSurfer.js
+- **Editor**: TipTap
 - **Forms**: React Hook Form + Zod
 - **Icons**: Lucide React
 
@@ -22,14 +22,11 @@ Build a stunning, modern music portfolio website that surpasses SoundCloud's des
 
 - **Visual Style**: Bold, large typography, generous white space, glassmorphism, and smooth animations (60fps).
 - **Color Palette**:
-  - Option 1: Deep purple (#6B46C1) + Electric blue (#3B82F6) + Coral (#FF6B6B)
-  - Option 2: Forest green (#2D6A4F) + Gold (#FFD700) + Cream (#F5F5DC)
-  - Option 3: Midnight blue (#0A1929) + Neon pink (#FF10F0) + Cyan (#00D9FF)
-  - Option 4: Burgundy (#800020) + Sage green (#9CAF88) + Warm beige (#E8DCC4)
-    _(User to select one, defaulting to Option 3 for now as it fits "modern/stunning")_
+  - **Selected**: Option 3: Midnight blue (#0A1929) + Neon pink (#FF10F0) + Cyan (#00D9FF)
+  - _(Refer to `docs/theme-colors.css` for variables)_
 - **Typography**:
-  - Headings: "Clash Display", "Syne", or "Cabinet Grotesk"
-  - Body: "Inter", "DM Sans", or "Outfit"
+  - Headings: "Clash Display"
+  - Body: "Outfit"
 - **Responsiveness**: Mobile-first, 100vh hero on desktop.
 
 ## Core Features

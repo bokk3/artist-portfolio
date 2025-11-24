@@ -29,6 +29,25 @@ When implementing any feature:
 - Use **SQLite** for the database.
 - Ensure all animations run at **60fps**.
 
+## Design & UI
+
+- **Theme**: "Midnight Blue + Neon Pink + Cyan" (refer to `docs/theme-colors.css`).
+  - Background: `#0a1929`
+  - Primary: `#ff10f0` (Neon Pink)
+  - Secondary: `#00d9ff` (Cyan)
+  - Accent: `#7b2cbf` (Deep Purple)
+- **Components**: **ALWAYS** use ShadCN UI components from `components/ui/`.
+  - Available: `button`, `card`, `input`, `textarea`, `dialog`, `dropdown-menu`, `avatar`, `badge`, `tabs`, `separator`, `sonner`, `label`, `select`, `form`, `skeleton`, `drawer`, `command`, `scroll-area`, `hover-card`, `tooltip`, `aspect-ratio`, `carousel`, `accordion`.
+- **Icons**: Use `lucide-react`.
+
+## Coding Standards
+
+- **Exports**: Use **Named Exports** for all components and functions. Avoid default exports.
+- **Structure**: Keep components small and focused.
+- **Validation**: Use `zod` for all form and API validation.
+- **Types**: Strict TypeScript usage. No `any`.
+- **Imports**: Use absolute imports (e.g. `@/components/...`) where possible.
+
 ## Audio Handling
 
 - Use **WaveSurfer.js** (or Peaks.js) for waveform visualization.
@@ -57,13 +76,6 @@ When implementing any feature:
 
 ## WYSIWYG Editor
 
-- Use **TipTap** or **Lexical** for the blog editor.
+- Use **TipTap** for the blog editor.
 - Support image uploads within the editor.
 - Sanitize HTML output before rendering.
-
-## Code Quality
-
-- Follow strict TypeScript rules.
-- Use `zod` for all form and API validation.
-- Keep components small and focused.
-- Use `lucide-react` for icons.

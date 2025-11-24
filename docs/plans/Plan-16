@@ -4,7 +4,10 @@
 Implement the contact form and newsletter signup.
 
 ## Tasks
-- [ ] Create a `ContactForm` component with validation (Zod).
-- [ ] Create a `NewsletterForm` component.
-- [ ] Implement Server Actions to handle form submissions (send email via Resend/SendGrid or log to DB).
+- [ ] Create a `ContactForm` component:
+    - [ ] Use **ShadCN Form** (with `useForm` and Zod).
+    - [ ] Use **ShadCN Input**, **Textarea**, **Button**.
+    - [ ] Use **Sonner** for success/error messages.
+- [ ] Create a `NewsletterForm` component (simple email input + button).
+- [ ] Implement Server Actions to handle form submissions.
 - [ ] Add a "Booking" specific form on the contact page.

@@ -5,9 +5,13 @@ Implement the persistent audio player with waveform visualization using WaveSurf
 
 ## Tasks
 - [ ] Install `wavesurfer.js`.
-- [ ] Create a `PlayerContext` to manage global playback state (current track, isPlaying, volume).
-- [ ] Create a `Player` component that stays fixed at the bottom of the screen.
-- [ ] Implement play/pause, next/prev, and volume controls.
-- [ ] Integrate WaveSurfer.js to render waveforms for the current track.
-- [ ] Ensure the player continues playing when navigating between pages (Next.js App Router handles this if layout is persistent).
-- [ ] Add a "Now Playing" indicator in the navbar or tab title.
+- [ ] Create a `PlayerContext` to manage global playback state.
+- [ ] Create a `Player` component fixed at the bottom:
+    - [ ] Use `glass-panel` utility from `theme-colors.css`.
+    - [ ] Use **ShadCN Slider** for volume control.
+    - [ ] Use **ShadCN Button** (ghost/icon variant) for controls.
+    - [ ] Add **ShadCN Tooltip** for control hints.
+    - [ ] Mobile: Use **ShadCN Drawer** for the full-screen player view.
+- [ ] Integrate WaveSurfer.js to render waveforms.
+- [ ] Ensure the player continues playing when navigating between pages.
+- [ ] Add a "Now Playing" indicator.

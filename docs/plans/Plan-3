@@ -4,9 +4,13 @@
 Build the public-facing layout and navigation bar, ensuring mobile responsiveness and smooth transitions.
 
 ## Tasks
-- [ ] Create the main `RootLayout` in `app/layout.tsx` with the chosen font (Inter/Outfit).
-- [ ] Create a `Navbar` component with links: Music, Videos, Tour, Blog, Gallery, About.
-- [ ] Implement a mobile menu (hamburger) using a Sheet component (shadcn/ui).
+- [ ] Create the main `RootLayout` in `app/layout.tsx` with the chosen font (Outfit/Clash Display).
+- [ ] Create a `Navbar` component:
+    - [ ] Desktop: Use standard links or `NavigationMenu`.
+    - [ ] Add **ShadCN Command** dialog for global search (triggered by icon or CMD+K).
+    - [ ] Mobile: Use **ShadCN Sheet** for the hamburger menu.
 - [ ] Create a `Footer` component with social links and newsletter signup placeholder.
-- [ ] Add Framer Motion for page transitions (optional, or simple fade-in).
+- [ ] Add Framer Motion for page transitions.
 - [ ] Ensure the layout has a placeholder for the persistent music player at the bottom.
+- [ ] Use **ShadCN DropdownMenu** for any user/admin menus.
+- [ ] Wrap main content in **ShadCN ScrollArea** (optional, if custom scrollbar desired).
