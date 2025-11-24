@@ -1,15 +1,17 @@
 # Plan 1: Project Setup & Database Schema
 
 ## Goal
+
 Initialize the Next.js 16 project, configure Tailwind v4, and set up the SQLite database with the defined schema.
 
 ## Tasks
-- [ ] Initialize Next.js 16 project with TypeScript and Tailwind CSS.
-- [ ] Install dependencies: `better-sqlite3`, `clsx`, `tailwind-merge`, `lucide-react`.
-- [ ] **Install ShadCN UI**: Initialize with `npx shadcn@latest init` (use "New York" style, "Zinc" base, CSS variables).
-- [ ] Install components: `npx shadcn@latest add button card input textarea dialog dropdown-menu avatar badge tabs separator sonner label select form skeleton drawer command scroll-area hover-card tooltip aspect-ratio carousel accordion`.
-- [ ] Configure Tailwind v4 with the "Midnight Blue + Neon Pink" theme (refer to `docs/theme-colors.css`).
-- [ ] Create `lib/db.ts` to initialize the SQLite database connection.
-- [ ] Create `scripts/init-db.ts` to execute `schema.sql` and seed initial data.
-- [ ] Run the database initialization script.
-- [ ] Verify the database file is created in `/db`.
+
+- [x] Initialize Next.js 16 project with TypeScript and Tailwind CSS.
+- [x] Install dependencies: `better-sqlite3`, `clsx`, `tailwind-merge`, `lucide-react`.
+- [x] **Install ShadCN UI**: Initialize with `npx shadcn@latest init` (use "New York" style, "Zinc" base, CSS variables).
+- [x] Install components: `npx shadcn@latest add button card input textarea dialog dropdown-menu avatar badge tabs separator sonner label select form skeleton drawer command scroll-area hover-card tooltip aspect-ratio carousel accordion`.
+- [x] Configure Tailwind v4 with the "Midnight Blue + Neon Pink" theme (refer to `docs/theme-colors.css`).
+- [x] Create `lib/db.ts` to initialize the SQLite database connection.
+- [x] Create `scripts/init-db.ts` to execute `schema.sql` and seed initial data.
+- [x] Run the database initialization script.
+- [x] Verify the database file is created in `/db`.
