@@ -1,17 +1,19 @@
 # Plan 14: Video Integration & Player
 
 ## Goal
+
 Create the "Videos" page and admin management for videos.
 
 ## Tasks
-- [ ] Create `app/videos/page.tsx`.
-- [ ] Create `app/admin/videos/page.tsx`.
-- [ ] Implement a `VideoCard` component:
-    - [ ] Use **ShadCN Card**.
-    - [ ] Use **ShadCN AspectRatio** (16:9) for the thumbnail.
-    - [ ] Add a play overlay.
-- [ ] Create a video player modal:
-    - [ ] Use **ShadCN Dialog**.
-    - [ ] Support YouTube/Vimeo embeds and native HTML5 video.
-- [ ] Fetch videos from the database.
-- [ ] Implement video management in the admin panel (add links, upload thumbnails).
+
+- [x] Create `app/videos/page.tsx`.
+- [x] Create `app/admin/videos/page.tsx`.
+- [x] Implement a `VideoCard` component:
+  - [x] Use **ShadCN Card**.
+  - [x] Use **ShadCN AspectRatio** (16:9) for the thumbnail.
+  - [x] Add a play overlay.
+- [x] Create a video player modal:
+  - [x] Use **ShadCN Dialog**.
+  - [x] Support YouTube/Vimeo embeds and native HTML5 video.
+- [x] Fetch videos from the database.
+- [x] Implement video management in the admin panel (add links, upload thumbnails).
