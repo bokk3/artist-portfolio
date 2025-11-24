@@ -52,9 +52,14 @@ RUN npm install --production --ignore-scripts && \
 # Create data directory for SQLite
 RUN mkdir -p /app/db && chown -R nextjs:nodejs /app/db
 
-# Initialize database as root, then change ownership
-RUN node scripts/init-db.js && \
-    chown -R nextjs:nodejs /app/db
+# Create entrypoint script for database initialization
+RUN echo '#!/bin/sh' > /app/docker-entrypoint.sh && \
+    echo 'if [ ! -f /app/db/artist.db ]; then' >> /app/docker-entrypoint.sh && \
+    echo '  echo "🚀 First run detected - initializing database..."' >> /app/docker-entrypoint.sh && \
+    echo '  node /app/scripts/init-db.js' >> /app/docker-entrypoint.sh && \
+    echo 'fi' >> /app/docker-entrypoint.sh && \
+    echo 'exec node server.js' >> /app/docker-entrypoint.sh && \
+    chmod +x /app/docker-entrypoint.sh
 
 USER nextjs
 
@@ -65,6 +70,6 @@ ENV HOSTNAME="0.0.0.0"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+  CMD node -e "require('http').get('http://localhost:3000/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-CMD ["node", "server.js"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
