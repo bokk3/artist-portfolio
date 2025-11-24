@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "./ui/table";
 import { Button } from "@/components/ui/button";
 import { Play, Pause } from "lucide-react";
 import { usePlayer } from "@/context/player-context";
