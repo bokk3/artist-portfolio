@@ -6,12 +6,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Music,
-  Video,
+  FileText,
   Calendar,
+  Video,
   Image,
-  BookOpen,
-  Settings,
   LogOut,
+  Settings,
+  BookOpen,
 } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 
@@ -42,21 +43,30 @@ export default function AdminLayout({
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
-          {adminNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-md transition-colors text-sm font-medium",
-                pathname.startsWith(item.href)
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              {item.name}
-            </Link>
-          ))}
+          <Link
+            href="/admin/gallery"
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+              pathname === "/admin/gallery"
+                ? "bg-muted text-primary"
+                : "text-muted-foreground"
+            )}
+          >
+            <Image className="h-4 w-4" />
+            Gallery
+          </Link>
+          <Link
+            href="/admin/settings"
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+              pathname === "/admin/settings"
+                ? "bg-muted text-primary"
+                : "text-muted-foreground"
+            )}
+          >
+            <Settings className="h-4 w-4" />
+            Settings
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-border/10">

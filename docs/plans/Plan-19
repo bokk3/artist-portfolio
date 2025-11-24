@@ -31,18 +31,18 @@ Implement additional features and pages that were identified as missing from the
   - [ ] Integrate with admin forms (replace URL inputs).
   - [ ] Store files in public directory or cloud storage.
 
-- [ ] Add Admin Settings Page (`app/admin/settings/page.tsx`):
+- [x] Add Admin Settings Page (`app/admin/settings/page.tsx`):
 
-  - [ ] Manage social media links.
-  - [ ] Edit about page content.
-  - [ ] Update site metadata.
-  - [ ] Configure general settings.
+  - [x] Manage social media links.
+  - [x] Edit about page content.
+  - [x] Update site metadata.
+  - [x] Configure general settings.
 
-- [ ] Add Social Sharing:
+- [x] Add Social Sharing:
 
-  - [ ] Share buttons on blog posts (Twitter, Facebook, LinkedIn).
-  - [ ] Share buttons on music releases.
-  - [ ] Copy link functionality.
+  - [x] Share buttons on blog posts (Twitter, Facebook, LinkedIn).
+  - [x] Share buttons on music releases.
+  - [x] Copy link functionality.
 
 - [x] Create Press Kit Page (`app/press/page.tsx`):
 

@@ -1,36 +1,236 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎵 Artist Portfolio Website
 
-## Getting Started
+A modern, high-performance music artist portfolio website built with Next.js 16, React 19, and TypeScript. Features a stunning dark theme with neon accents, complete admin panel, and all the essentials for a professional music presence.
 
-First, run the development server:
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![React](https://img.shields.io/badge/React-19-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+
+## ✨ Features
+
+### 🎸 Public-Facing
+
+- **Music Player** - Interactive waveform player with WaveSurfer.js
+- **Releases & Discography** - Beautiful release showcase with tracklists
+- **Blog** - Rich text blog with reading time estimation
+- **Events/Tour Dates** - Upcoming and past shows with ticket links
+- **Photo Gallery** - Lightbox gallery with category filtering
+- **Video Section** - YouTube/Vimeo integration with modal player
+- **About Page** - Artist bio, stats, and vision
+- **Contact Page** - Get in touch form
+- **Press Kit** - Downloadable media assets
+- **Newsletter** - Email subscription with database storage
+
+### Admin Panel
+
+- **Dashboard** - Overview with stats and quick actions
+- **Music Management** - CRUD for releases and tracks
+- **Blog Management** - Create and edit blog posts
+- **Events Management** - Manage tour dates
+- **Gallery Management** - Upload and organize photos
+- **Video Management** - Add YouTube/Vimeo videos
+- **Settings** - Configure site info and social links
+- **Authentication** - Secure JWT-based login
+
+### 🚀 Technical Features
+
+- **SEO Optimized** - Open Graph, Twitter Cards, sitemap, robots.txt
+- **Responsive Design** - Mobile-first, works on all devices
+- **Dark Mode** - Beautiful dark theme with neon accents
+- **Type-Safe** - Full TypeScript coverage
+- **Database** - SQLite with better-sqlite3
+- **Modern UI** - ShadCN UI components
+- **Animations** - Smooth 60fps transitions with Framer Motion
+- **Error Handling** - Custom 404 and error pages
+- **Loading States** - Skeleton loaders and spinners
+
+## 🛠️ Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript 5
+- **Styling:** Tailwind CSS v4
+- **UI Components:** ShadCN UI
+- **Database:** SQLite (better-sqlite3)
+- **Authentication:** JWT with jose
+- **Music Player:** WaveSurfer.js
+- **Icons:** Lucide React
+- **Animations:** Framer Motion
+- **Lightbox:** yet-another-react-lightbox
+- **Forms:** React Hook Form + Zod
+- **Notifications:** Sonner
+
+## 📦 Installation
+
+1. **Clone the repository**
+
+```bash
+git clone <repository-url>
+cd artist-portfolio
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+```
+
+3. **Set up environment variables**
+
+```bash
+# Copy the example env file
+cp .env.example .env.local
+
+# Edit .env.local and add your values
+```
+
+4. **Initialize the database**
+
+```bash
+# Run the database initialization script
+node lib/db-init.js
+```
+
+5. **Start development server**
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` to see your site!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🗄️ Database Schema
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application uses SQLite with the following tables:
 
-## Learn More
+- `users` - Admin users
+- `releases` - Music releases/albums
+- `tracks` - Individual tracks
+- `posts` - Blog posts
+- `events` - Tour dates/events
+- `videos` - Video content
+- `gallery` - Photo gallery images
+- `newsletter_subscribers` - Email subscribers
 
-To learn more about Next.js, take a look at the following resources:
+## 🎨 Customization
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Theme Colors
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The theme uses a "Midnight Blue + Neon Pink + Cyan" color scheme. To customize:
 
-## Deploy on Vercel
+1. Edit `docs/theme-colors.css`
+2. Update Tailwind config if needed
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Fonts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Headings:** Clash Display
+- **Body:** Outfit
+
+Configure fonts in `app/layout.tsx`.
+
+## 📝 Content Management
+
+### Adding Content
+
+**Music Release:**
+
+1. Log in to `/admin`
+2. Navigate to Music → Add Release
+3. Fill in release details
+4. Add tracks
+
+**Blog Post:**
+
+1. Go to Admin → Blog → New Post
+2. Write content (HTML supported)
+3. Add tags and cover image
+4. Publish or save as draft
+
+**Event:**
+
+1. Admin → Events → Add Event
+2. Enter date, venue, city
+3. Add ticket URL
+
+## 🚀 Deployment
+
+### Docker Deployment
+
+```bash
+# Build the Docker image
+docker build -t artist-portfolio .
+
+# Run the container
+docker run -p 3000:3000 artist-portfolio
+```
+
+### Vercel/Netlify
+
+1. Push code to GitHub
+2. Connect repository to Vercel/Netlify
+3. Configure environment variables
+4. Deploy!
+
+### Environment Variables
+
+```env
+JWT_SECRET=your-jwt-secret
+NEXT_PUBLIC_BASE_URL=https://yourdomain.com
+```
+
+## 📚 Documentation
+
+- **Plans:** See `/docs/plans/` for detailed implementation plans
+- **Theme:** `docs/theme-colors.css` for color scheme
+- **Context:** `docs/PROJECT_CONTEXT.md` for project overview
+
+## 🔒 Admin Access
+
+Default admin route: `/admin/login`
+
+**Initial Setup:**
+
+1. Run database initialization
+2. Create admin user (modify `lib/db-init.js`)
+3. Log in with credentials
+
+## 🎯 Project Structure
+
+```
+artist-portfolio/
+├── app/                  # Next.js app directory
+│   ├── (public)/        # Public pages
+│   ├── admin/           # Admin panel
+│   ├── api/             # API routes
+│   └── actions/         # Server actions
+├── components/          # React components
+│   └── ui/             # ShadCN UI components
+├── lib/                # Utilities and database
+├── context/            # React context providers
+├── docs/               # Documentation
+└── public/             # Static assets
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 💬 Support
+
+For questions or issues, please open an issue on GitHub or contact via email.
+
+## 🎉 Acknowledgments
+
+Built with ❤️ in Belgium by [truyens.pro](https://truyens.pro)
+
+- UI Components: [ShadCN UI](https://ui.shadcn.com/)
+- Icons: [Lucide](https://lucide.dev/)
+- Audio: [WaveSurfer.js](https://wavesurfer.xyz/)
+
+---
+
+**Made with ❤️ for artists who want to showcase their work beautifully.**

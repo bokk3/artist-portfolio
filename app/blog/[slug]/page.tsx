@@ -2,9 +2,10 @@ import db from "@/lib/db";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Share2 } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { ShareButtons } from "@/components/share-buttons";
 
 export const dynamic = "force-dynamic";
 
@@ -72,10 +73,7 @@ export default async function BlogPostPage({
           </div>
         </div>
 
-        <Button variant="outline" size="sm">
-          <Share2 className="mr-2 h-4 w-4" />
-          Share
-        </Button>
+        <ShareButtons title={post.title} url={`/blog/${slug}`} />
       </div>
 
       {/* Cover Image */}
