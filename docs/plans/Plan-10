@@ -4,11 +4,11 @@
 Create the "Tour" or "Events" page to display upcoming and past shows.
 
 ## Tasks
-- [ ] Create `app/tour/page.tsx`.
-- [ ] Create an `EventRow` component:
-    - [ ] Use **ShadCN Card** or a styled row layout.
-    - [ ] Display date, venue, city.
-    - [ ] Use **ShadCN Button** for "Get Tickets".
-- [ ] Fetch events from the database, separating "Upcoming" and "Past".
-- [ ] Add "Add to Calendar" functionality.
-- [ ] Embed a Google Map (optional).
+- [x] Create `app/tour/page.tsx`.
+- [x] Create an `EventRow` component:
+    - [x] Use **ShadCN Card** or a styled row layout.
+    - [x] Display date, venue, city.
+    - [x] Use **ShadCN Button** for "Get Tickets".
+- [x] Fetch events from the database, separating "Upcoming" and "Past".
+- [x] Add "Add to Calendar" functionality.
+- [x] Embed a Google Map (optional).
