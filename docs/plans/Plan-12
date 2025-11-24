@@ -1,13 +1,15 @@
 # Plan 12: Gallery with Lightbox
 
 ## Goal
+
 Implement a photo/video gallery with a masonry layout and lightbox modal.
 
 ## Tasks
-- [ ] Create `app/gallery/page.tsx`.
-- [ ] Install `yet-another-react-lightbox`.
-- [ ] Implement a masonry grid layout for images:
-    - [ ] Use **ShadCN AspectRatio** to prevent layout shifts.
-- [ ] Fetch gallery images from the database.
-- [ ] Add category filtering (Live, Studio, Press) using **ShadCN Tabs** or **Button** group.
-- [ ] Enable clicking an image to open it in the lightbox.
+
+- [x] Create `app/gallery/page.tsx`.
+- [x] Install `yet-another-react-lightbox`.
+- [x] Implement a masonry grid layout for images:
+  - [x] Use **ShadCN AspectRatio** to prevent layout shifts.
+- [x] Fetch gallery images from the database.
+- [x] Add category filtering (Live, Studio, Press) using **ShadCN Tabs** or **Button** group.
+- [x] Enable clicking an image to open it in the lightbox.
