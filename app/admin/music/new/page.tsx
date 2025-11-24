@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { createRelease } from "@/app/actions/admin-music";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,10 +14,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/file-upload";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 export default function NewReleasePage() {
+  const [coverUrl, setCoverUrl] = useState("");
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
@@ -81,12 +85,13 @@ export default function NewReleasePage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="cover_image_url">Cover Image URL</Label>
-              <Input
-                id="cover_image_url"
-                name="cover_image_url"
-                placeholder="https://..."
+              <Label>Cover Image</Label>
+              <FileUpload
+                type="cover"
+                accept="image/*"
+                onUploadComplete={setCoverUrl}
               />
+              <input type="hidden" name="cover_image_url" value={coverUrl} />
             </div>
 
             <div className="space-y-2">

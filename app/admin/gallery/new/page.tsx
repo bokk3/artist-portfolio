@@ -12,12 +12,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/file-upload";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
 
 export default function NewGalleryImagePage() {
   const [category, setCategory] = useState("live");
+  const [imageUrl, setImageUrl] = useState("");
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -37,13 +39,13 @@ export default function NewGalleryImagePage() {
         <CardContent>
           <form action={createGalleryImage} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="image_url">Image URL</Label>
-              <Input
-                id="image_url"
-                name="image_url"
-                placeholder="https://..."
-                required
+              <Label>Gallery Image</Label>
+              <FileUpload
+                type="gallery"
+                accept="image/*"
+                onUploadComplete={setImageUrl}
               />
+              <input type="hidden" name="image_url" value={imageUrl} required />
             </div>
 
             <div className="space-y-2">
