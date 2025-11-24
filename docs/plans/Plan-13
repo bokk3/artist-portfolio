@@ -1,12 +1,14 @@
 # Plan 13: Admin Panel - Gallery Management
 
 ## Goal
+
 Build the interface to upload and manage gallery images.
 
 ## Tasks
-- [ ] Create `app/admin/gallery/page.tsx`.
-- [ ] Implement multi-file upload:
-    - [ ] Use `react-dropzone` inside a **ShadCN Card**.
-- [ ] Create a drag-and-drop interface to reorder images (update `display_order` in DB).
-- [ ] Add fields for captions and categories using **ShadCN Input** and **Select**.
-- [ ] Create Server Actions for gallery management.
+
+- [x] Create `app/admin/gallery/page.tsx`.
+- [x] Implement multi-file upload:
+  - [x] Use `react-dropzone` inside a **ShadCN Card**.
+- [x] Create a drag-and-drop interface to reorder images (update `display_order` in DB).
+- [x] Add fields for captions and categories using **ShadCN Input** and **Select**.
+- [x] Create Server Actions for gallery management.
