@@ -1,17 +1,19 @@
 # Plan 4: Music Player & Waveform Integration
 
 ## Goal
+
 Implement the persistent audio player with waveform visualization using WaveSurfer.js.
 
 ## Tasks
-- [ ] Install `wavesurfer.js`.
-- [ ] Create a `PlayerContext` to manage global playback state.
-- [ ] Create a `Player` component fixed at the bottom:
-    - [ ] Use `glass-panel` utility from `theme-colors.css`.
-    - [ ] Use **ShadCN Slider** for volume control.
-    - [ ] Use **ShadCN Button** (ghost/icon variant) for controls.
-    - [ ] Add **ShadCN Tooltip** for control hints.
-    - [ ] Mobile: Use **ShadCN Drawer** for the full-screen player view.
-- [ ] Integrate WaveSurfer.js to render waveforms.
-- [ ] Ensure the player continues playing when navigating between pages.
-- [ ] Add a "Now Playing" indicator.
+
+- [x] Install `wavesurfer.js`.
+- [x] Create a `PlayerContext` to manage global playback state.
+- [x] Create a `Player` component fixed at the bottom:
+  - [x] Use `glass-panel` utility from `theme-colors.css`.
+  - [x] Use **ShadCN Slider** for volume control.
+  - [x] Use **ShadCN Button** (ghost/icon variant) for controls.
+  - [x] Add **ShadCN Tooltip** for control hints.
+  - [x] Mobile: Use **ShadCN Drawer** for the full-screen player view.
+- [x] Integrate WaveSurfer.js to render waveforms.
+- [x] Ensure the player continues playing when navigating between pages.
+- [x] Add a "Now Playing" indicator.

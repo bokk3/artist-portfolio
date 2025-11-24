@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import PageTransition from "@/components/page-transition";
+import { PlayerProvider } from "@/context/player-context";
+import { Player } from "@/components/player";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -31,27 +33,26 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col`}
       >
-        {/* Navbar */}
-        <header className="fixed top-0 w-full z-50 border-b border-border/10 bg-background/80 backdrop-blur-md">
-          <Navbar />
-        </header>
+        <PlayerProvider>
+          {/* Navbar */}
+          <header className="fixed top-0 w-full z-50 border-b border-border/10 bg-background/80 backdrop-blur-md">
+            <Navbar />
+          </header>
 
-        <main className="flex-1 pt-16 pb-24">
-          <PageTransition>{children}</PageTransition>
-        </main>
+          <main className="flex-1 pt-16 pb-24">
+            <PageTransition>{children}</PageTransition>
+          </main>
 
-        {/* Footer */}
-        <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20">
-          <Footer />
-        </footer>
+          {/* Footer */}
+          <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20">
+            <Footer />
+          </footer>
 
-        {/* Player Placeholder - Persistent at bottom */}
-        <div className="fixed bottom-0 w-full z-50 bg-background/90 backdrop-blur-lg border-t border-border/10 h-20 flex items-center justify-center text-muted-foreground">
-          {/* Player Component will go here */}
-          <span className="text-sm">Music Player Placeholder</span>
-        </div>
+          {/* Persistent Player */}
+          <Player />
 
-        <Toaster />
+          <Toaster />
+        </PlayerProvider>
       </body>
     </html>
   );
