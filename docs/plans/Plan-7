@@ -4,13 +4,13 @@
 Design a stunning homepage with a full-screen hero section and featured content.
 
 ## Tasks
-- [ ] Create `app/page.tsx`.
-- [ ] Design the Hero section:
-    - [ ] Large background image/video.
-    - [ ] **ShadCN Button** (size="lg") for "Listen Now" CTA.
-    - [ ] (Optional) Use **ShadCN Carousel** for rotating featured content.
-- [ ] Create "Featured Music" section:
-    - [ ] Use `ReleaseCard` (from Plan 5).
-- [ ] Create "Latest News" section.
-- [ ] Implement parallax scrolling (Framer Motion).
-- [ ] Use `glass-panel` utility for any text overlays.
+- [x] Create `app/page.tsx`.
+- [x] Design the Hero section:
+    - [x] Large background image/video.
+    - [x] **ShadCN Button** (size="lg") for "Listen Now" CTA.
+    - [x] (Optional) Use **ShadCN Carousel** for rotating featured content.
+- [x] Create "Featured Music" section:
+    - [x] Use `ReleaseCard` (from Plan 5).
+- [x] Create "Latest News" section.
+- [x] Implement parallax scrolling (Framer Motion).
+- [x] Use `glass-panel` utility for any text overlays.
