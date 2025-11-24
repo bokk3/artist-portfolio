@@ -1,0 +1,17 @@
+import db from "@/lib/db";
+import { NextResponse } from "next/server";
+
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  const stmt = db.prepare("SELECT * FROM posts WHERE id = ?");
+  const post = stmt.get(id);
+
+  if (!post) {
+    return NextResponse.json({ error: "Post not found" }, { status: 404 });
+  }
+
+  return NextResponse.json(post);
+}

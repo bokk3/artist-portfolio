@@ -1,15 +1,17 @@
 # Plan 9: Admin Panel - Blog Management
 
 ## Goal
+
 Build the blog management interface with a WYSIWYG editor.
 
 ## Tasks
-- [ ] Install **TipTap** (core, starter-kit, image extension).
-- [ ] Create `app/admin/blog/page.tsx` (List) and `app/admin/blog/new/page.tsx` (Editor).
-- [ ] Implement the Editor:
-    - [ ] Use **TipTap** for the rich text area.
-    - [ ] Use **ShadCN Button** for toolbar items (Bold, Italic, etc.).
-    - [ ] Use **ShadCN Input** for the post title.
-- [ ] Add image upload functionality within the editor.
-- [ ] Create Server Actions to save/update posts.
-- [ ] Add fields for SEO metadata and tags.
+
+- [x] Install **TipTap** (core, starter-kit, image extension).
+- [x] Create `app/admin/blog/page.tsx` (List) and `app/admin/blog/new/page.tsx` (Editor).
+- [x] Implement the Editor:
+  - [x] Use **TipTap** for the rich text area.
+  - [x] Use **ShadCN Button** for toolbar items (Bold, Italic, etc.).
+  - [x] Use **ShadCN Input** for the post title.
+- [x] Add image upload functionality within the editor.
+- [x] Create Server Actions to save/update posts.
+- [x] Add fields for SEO metadata and tags.
