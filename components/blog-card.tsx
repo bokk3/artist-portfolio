@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -20,17 +23,24 @@ type Post = {
 };
 
 function estimateReadingTime(content: string): number {
+  if (!content) return 1;
   const wordsPerMinute = 200;
   const words = content.split(/\s+/).length;
   return Math.ceil(words / wordsPerMinute);
 }
 
-export function BlogCard({ post }: { post: Post }) {
+export function BlogCard({ post, index = 0 }: { post: Post; index?: number }) {
   const tags = post.tags ? JSON.parse(post.tags) : [];
 
   return (
-    <Link href={`/blog/${post.slug}`}>
-      <Card className="overflow-hidden group border-border/10 bg-card/50 hover:bg-card/80 transition-all hover:shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+    >
+      <Link href={`/blog/${post.slug}`}>
+        <Card className="overflow-hidden group border-border/10 bg-card/50 hover:bg-card/80 transition-all hover:shadow-lg">
         {post.cover_image_url && (
           <div className="relative w-full h-48 overflow-hidden bg-muted">
             <Image
@@ -71,5 +81,6 @@ export function BlogCard({ post }: { post: Post }) {
         </CardFooter>
       </Card>
     </Link>
+    </motion.div>
   );
 }

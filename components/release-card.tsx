@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -17,12 +18,19 @@ type Release = {
   cover_image_url: string;
 };
 
-export function ReleaseCard({ release }: { release: Release }) {
+export function ReleaseCard({ release, index = 0 }: { release: Release; index?: number }) {
   // In a real app, we'd fetch the first track of the release to play
   // For now, the play button will just link to the details page where tracks are listed
 
   return (
-    <Card className="overflow-hidden group border-border/10 bg-card/50 hover:bg-card/80 transition-colors">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ y: -5 }}
+    >
+      <Card className="overflow-hidden group border-border/10 bg-card/50 hover:bg-card/80 transition-colors">
       <div className="p-4 pb-0">
         <AspectRatio
           ratio={1 / 1}
@@ -42,16 +50,21 @@ export function ReleaseCard({ release }: { release: Release }) {
           )}
 
           {/* Hover Play Overlay */}
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <motion.div
+            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+            whileHover={{ scale: 1.05 }}
+          >
             <Link href={`/music/${release.id}`}>
-              <Button
-                size="icon"
-                className="rounded-full h-12 w-12 bg-primary text-primary-foreground hover:bg-primary/90"
-              >
-                <Play className="h-6 w-6 ml-1" />
-              </Button>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  size="icon"
+                  className="rounded-full h-12 w-12 bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  <Play className="h-6 w-6 ml-1" />
+                </Button>
+              </motion.div>
             </Link>
-          </div>
+          </motion.div>
         </AspectRatio>
       </div>
       <CardContent className="p-4">
@@ -64,5 +77,6 @@ export function ReleaseCard({ release }: { release: Release }) {
         </p>
       </CardContent>
     </Card>
+    </motion.div>
   );
 }

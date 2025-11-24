@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -27,12 +28,17 @@ function getEmbedUrl(videoUrl: string, platform: string): string {
   return videoUrl;
 }
 
-export function VideoCard({ video }: { video: Video }) {
+export function VideoCard({ video, index = 0 }: { video: Video; index?: number }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const embedUrl = getEmbedUrl(video.video_url, video.platform);
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+    >
       <Card
         className="overflow-hidden group cursor-pointer border-border/10 hover:border-primary/50 transition-all"
         onClick={() => setDialogOpen(true)}
@@ -48,11 +54,18 @@ export function VideoCard({ video }: { video: Video }) {
           )}
 
           {/* Play Overlay */}
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <div className="rounded-full bg-primary p-4">
+          <motion.div
+            className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+            whileHover={{ scale: 1.05 }}
+          >
+            <motion.div
+              className="rounded-full bg-primary p-4"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
               <Play className="h-8 w-8 text-primary-foreground ml-1" />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </AspectRatio>
         <CardContent className="p-4">
           <h3 className="font-bold truncate">{video.title}</h3>
@@ -78,6 +91,6 @@ export function VideoCard({ video }: { video: Video }) {
           </AspectRatio>
         </DialogContent>
       </Dialog>
-    </>
+    </motion.div>
   );
 }
