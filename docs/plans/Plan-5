@@ -1,0 +1,12 @@
+# Plan 5: Releases/Discography Section
+
+## Goal
+Create the "Music" page to display albums and singles, fetching data from the SQLite database.
+
+## Tasks
+- [ ] Create `app/music/page.tsx`.
+- [ ] Create a `ReleaseCard` component to display album artwork and title.
+- [ ] Fetch tracks from the database, grouped by album/single.
+- [ ] Implement a grid layout for releases.
+- [ ] Add a "Play" button on the card to start playing the album in the global player.
+- [ ] Create a detailed view for releases (optional modal or expand-in-place) to show the tracklist.

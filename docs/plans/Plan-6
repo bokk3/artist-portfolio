@@ -1,0 +1,12 @@
+# Plan 6: Admin Panel - Music Management
+
+## Goal
+Build the admin interface to upload and manage tracks.
+
+## Tasks
+- [ ] Create `app/admin/music/page.tsx`.
+- [ ] Implement a file upload component using `react-dropzone` for audio and artwork.
+- [ ] Create a Server Action `uploadTrack` to save files to `/public/uploads` and insert records into the DB.
+- [ ] (Optional) Generate waveform data on the server during upload (using a node library or client-side pre-processing).
+- [ ] Create a data table to list existing tracks with edit/delete options.
+- [ ] Add form fields for metadata: Title, Artist, Album, Genre, BPM.

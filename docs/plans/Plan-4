@@ -1,0 +1,13 @@
+# Plan 4: Music Player & Waveform Integration
+
+## Goal
+Implement the persistent audio player with waveform visualization using WaveSurfer.js.
+
+## Tasks
+- [ ] Install `wavesurfer.js`.
+- [ ] Create a `PlayerContext` to manage global playback state (current track, isPlaying, volume).
+- [ ] Create a `Player` component that stays fixed at the bottom of the screen.
+- [ ] Implement play/pause, next/prev, and volume controls.
+- [ ] Integrate WaveSurfer.js to render waveforms for the current track.
+- [ ] Ensure the player continues playing when navigating between pages (Next.js App Router handles this if layout is persistent).
+- [ ] Add a "Now Playing" indicator in the navbar or tab title.

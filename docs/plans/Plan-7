@@ -1,0 +1,12 @@
+# Plan 7: Homepage Hero & Featured Content
+
+## Goal
+Design a stunning homepage with a full-screen hero section and featured content.
+
+## Tasks
+- [ ] Create `app/page.tsx`.
+- [ ] Design the Hero section with a large background image/video and artist branding.
+- [ ] Add a "Listen Now" CTA that plays the latest release.
+- [ ] Create a "Featured Music" section displaying the top tracks.
+- [ ] Create a "Latest News" or "Upcoming Shows" teaser section.
+- [ ] Implement parallax scrolling or scroll-triggered animations using Framer Motion.

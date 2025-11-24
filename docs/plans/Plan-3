@@ -1,0 +1,12 @@
+# Plan 3: Core Layout & Navigation
+
+## Goal
+Build the public-facing layout and navigation bar, ensuring mobile responsiveness and smooth transitions.
+
+## Tasks
+- [ ] Create the main `RootLayout` in `app/layout.tsx` with the chosen font (Inter/Outfit).
+- [ ] Create a `Navbar` component with links: Music, Videos, Tour, Blog, Gallery, About.
+- [ ] Implement a mobile menu (hamburger) using a Sheet component (shadcn/ui).
+- [ ] Create a `Footer` component with social links and newsletter signup placeholder.
+- [ ] Add Framer Motion for page transitions (optional, or simple fade-in).
+- [ ] Ensure the layout has a placeholder for the persistent music player at the bottom.

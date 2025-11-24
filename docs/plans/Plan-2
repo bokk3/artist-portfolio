@@ -1,0 +1,13 @@
+# Plan 2: Authentication System
+
+## Goal
+Implement a secure, single-user authentication system for the admin panel using a password stored in `.env`.
+
+## Tasks
+- [ ] Install `jose` for JWT handling.
+- [ ] Create `.env.local` and add `ADMIN_PASSWORD` and `JWT_SECRET`.
+- [ ] Create `lib/auth.ts` for session management (encrypt/decrypt JWT).
+- [ ] Create a login page at `/login` with a password form.
+- [ ] Create a Server Action `loginAction` to verify the password and set a session cookie.
+- [ ] Create middleware to protect `/admin` routes (redirect to `/login` if no session).
+- [ ] Add a logout button/action in the admin layout.

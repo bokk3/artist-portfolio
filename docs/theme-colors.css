@@ -1,0 +1,43 @@
+/* Tailwind CSS v4 Theme Configuration */
+/* Option 3: Midnight Blue + Neon Pink + Cyan */
+
+@theme {
+  /* Colors */
+  --color-background: #0a1929;
+  --color-foreground: #f0f4f8;
+
+  --color-primary: #ff10f0; /* Neon Pink */
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #00d9ff; /* Cyan */
+  --color-secondary-foreground: #0a1929;
+
+  --color-accent: #7b2cbf; /* Deep Purple Accent */
+  --color-accent-foreground: #ffffff;
+
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+
+  --color-card: rgba(30, 41, 59, 0.7); /* Glassmorphism base */
+  --color-card-foreground: #f0f4f8;
+
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Typography */
+  --font-display: "Clash Display", sans-serif;
+  --font-body: "Outfit", sans-serif;
+
+  /* Animations */
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .glass-panel {
+    @apply bg-card backdrop-blur-md border border-border;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+  }
+}

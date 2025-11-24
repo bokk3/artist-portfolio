@@ -1,0 +1,13 @@
+# Plan 1: Project Setup & Database Schema
+
+## Goal
+Initialize the Next.js 16 project, configure Tailwind v4, and set up the SQLite database with the defined schema.
+
+## Tasks
+- [ ] Initialize Next.js 16 project with TypeScript and Tailwind CSS.
+- [ ] Install dependencies: `better-sqlite3`, `clsx`, `tailwind-merge`, `lucide-react`.
+- [ ] Configure Tailwind v4 with the "Midnight Blue + Neon Pink" theme (from `theme-colors.css`).
+- [ ] Create `lib/db.ts` to initialize the SQLite database connection.
+- [ ] Create `scripts/init-db.ts` to execute `schema.sql` and seed initial data.
+- [ ] Run the database initialization script.
+- [ ] Verify the database file is created in `/db`.

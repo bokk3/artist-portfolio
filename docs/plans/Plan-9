@@ -1,0 +1,12 @@
+# Plan 9: Admin Panel - Blog Management
+
+## Goal
+Build the blog management interface with a WYSIWYG editor.
+
+## Tasks
+- [ ] Install `tiptap` or `lexical` for the rich text editor.
+- [ ] Create `app/admin/blog/page.tsx` (list view) and `app/admin/blog/new/page.tsx` (editor).
+- [ ] Implement the editor with toolbar (bold, italic, headings, links).
+- [ ] Add image upload functionality within the editor.
+- [ ] Create Server Actions to save/update posts.
+- [ ] Add fields for SEO metadata (title, description) and tags.

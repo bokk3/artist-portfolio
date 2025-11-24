@@ -1,0 +1,11 @@
+# Plan 17: Performance Optimization & SEO
+
+## Goal
+Optimize the site for performance and search engines.
+
+## Tasks
+- [ ] Add dynamic metadata (title, description, OpenGraph images) to all pages.
+- [ ] Implement `sitemap.ts` and `robots.ts`.
+- [ ] Optimize images using `next/image` with proper sizing.
+- [ ] Audit performance using Lighthouse and fix issues (LCP, CLS).
+- [ ] Ensure all interactive elements are accessible (ARIA labels).

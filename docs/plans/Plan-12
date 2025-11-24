@@ -1,0 +1,12 @@
+# Plan 12: Gallery with Lightbox
+
+## Goal
+Implement a photo/video gallery with a masonry layout and lightbox modal.
+
+## Tasks
+- [ ] Create `app/gallery/page.tsx`.
+- [ ] Install a lightbox library (e.g., `yet-another-react-lightbox` or custom).
+- [ ] Implement a masonry grid layout for images.
+- [ ] Fetch gallery images from the database.
+- [ ] Add category filtering (Live, Studio, Press).
+- [ ] Enable clicking an image to open it in the lightbox.

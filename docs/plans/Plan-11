@@ -1,0 +1,11 @@
+# Plan 11: Admin Panel - Events Management
+
+## Goal
+Build the interface to manage tour dates.
+
+## Tasks
+- [ ] Create `app/admin/events/page.tsx`.
+- [ ] Create a form to add/edit events (Date, Venue, City, Ticket Link).
+- [ ] Add a status toggle (Upcoming, Sold Out, Cancelled).
+- [ ] Implement a list view to manage existing events.
+- [ ] Create Server Actions for event CRUD operations.

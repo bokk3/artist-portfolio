@@ -1,0 +1,12 @@
+# Plan 8: Blog System (Frontend)
+
+## Goal
+Implement the public-facing blog section with a card layout and rich text rendering.
+
+## Tasks
+- [ ] Create `app/blog/page.tsx` to list all published posts.
+- [ ] Create `app/blog/[slug]/page.tsx` for single post view.
+- [ ] Create a `BlogCard` component.
+- [ ] Implement a function to estimate reading time from content length.
+- [ ] Add social share buttons (Twitter, Facebook, WhatsApp) to the single post page.
+- [ ] Render rich text content safely (using `dangerouslySetInnerHTML` with sanitization or a parser).

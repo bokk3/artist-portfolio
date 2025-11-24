@@ -1,0 +1,10 @@
+# Plan 16: Newsletter & Contact Forms
+
+## Goal
+Implement the contact form and newsletter signup.
+
+## Tasks
+- [ ] Create a `ContactForm` component with validation (Zod).
+- [ ] Create a `NewsletterForm` component.
+- [ ] Implement Server Actions to handle form submissions (send email via Resend/SendGrid or log to DB).
+- [ ] Add a "Booking" specific form on the contact page.

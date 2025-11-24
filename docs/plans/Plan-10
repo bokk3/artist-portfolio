@@ -1,0 +1,11 @@
+# Plan 10: Events/Tour Dates Section
+
+## Goal
+Create the "Tour" or "Events" page to display upcoming and past shows.
+
+## Tasks
+- [ ] Create `app/tour/page.tsx`.
+- [ ] Create an `EventRow` component (date, venue, city, ticket button).
+- [ ] Fetch events from the database, separating "Upcoming" and "Past".
+- [ ] Add "Add to Calendar" functionality (generate .ics file or Google Calendar link).
+- [ ] Embed a Google Map showing the location of the next upcoming show (optional).

@@ -1,0 +1,12 @@
+# Plan 15: About Section & Social Integration
+
+## Goal
+Build the "About" page and integrate social media feeds.
+
+## Tasks
+- [ ] Create `app/about/page.tsx`.
+- [ ] Display the artist bio (fetched from settings or hardcoded initially).
+- [ ] Add a "Press Kit" download button.
+- [ ] Embed Spotify/Apple Music artist profiles.
+- [ ] (Optional) Integrate Instagram Basic Display API to show latest photos.
+- [ ] Ensure all social links are correctly linked in the footer/contact area.

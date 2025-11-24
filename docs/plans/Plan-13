@@ -1,0 +1,11 @@
+# Plan 13: Admin Panel - Gallery Management
+
+## Goal
+Build the interface to upload and manage gallery images.
+
+## Tasks
+- [ ] Create `app/admin/gallery/page.tsx`.
+- [ ] Implement a multi-file upload component for images.
+- [ ] Create a drag-and-drop interface to reorder images (update `display_order` in DB).
+- [ ] Add fields for captions and categories.
+- [ ] Create Server Actions for gallery management.

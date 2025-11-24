@@ -1,0 +1,10 @@
+# Plan 18: Advanced Features
+
+## Goal
+Implement advanced features like analytics and comments.
+
+## Tasks
+- [ ] Integrate Google Analytics or Vercel Analytics.
+- [ ] Add a comments section to blog posts (using Giscus or custom implementation).
+- [ ] Implement a "Streaming Stats" dashboard in the admin panel (mock data or API integration).
+- [ ] Add a "Dark Mode" toggle (if not already default).
