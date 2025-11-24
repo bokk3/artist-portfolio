@@ -43,30 +43,21 @@ export default function AdminLayout({
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
-          <Link
-            href="/admin/gallery"
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-              pathname === "/admin/gallery"
-                ? "bg-muted text-primary"
-                : "text-muted-foreground"
-            )}
-          >
-            <Image className="h-4 w-4" />
-            Gallery
-          </Link>
-          <Link
-            href="/admin/settings"
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-              pathname === "/admin/settings"
-                ? "bg-muted text-primary"
-                : "text-muted-foreground"
-            )}
-          >
-            <Settings className="h-4 w-4" />
-            Settings
-          </Link>
+          {adminNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+                pathname.startsWith(item.href)
+                  ? "bg-muted text-primary"
+                  : "text-muted-foreground"
+              )}
+            >
+              <item.icon className="h-4 w-4" />
+              {item.name}
+            </Link>
+          ))}
         </nav>
 
         <div className="p-4 border-t border-border/10">
