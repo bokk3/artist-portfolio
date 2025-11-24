@@ -1,16 +1,18 @@
 # Plan 3: Core Layout & Navigation
 
 ## Goal
+
 Build the public-facing layout and navigation bar, ensuring mobile responsiveness and smooth transitions.
 
 ## Tasks
-- [ ] Create the main `RootLayout` in `app/layout.tsx` with the chosen font (Outfit/Clash Display).
-- [ ] Create a `Navbar` component:
-    - [ ] Desktop: Use standard links or `NavigationMenu`.
-    - [ ] Add **ShadCN Command** dialog for global search (triggered by icon or CMD+K).
-    - [ ] Mobile: Use **ShadCN Sheet** for the hamburger menu.
-- [ ] Create a `Footer` component with social links and newsletter signup placeholder.
-- [ ] Add Framer Motion for page transitions.
-- [ ] Ensure the layout has a placeholder for the persistent music player at the bottom.
-- [ ] Use **ShadCN DropdownMenu** for any user/admin menus.
-- [ ] Wrap main content in **ShadCN ScrollArea** (optional, if custom scrollbar desired).
+
+- [x] Create the main `RootLayout` in `app/layout.tsx` with the chosen font (Outfit/Clash Display).
+- [x] Create a `Navbar` component:
+  - [x] Desktop: Use standard links or `NavigationMenu`.
+  - [x] Add **ShadCN Command** dialog for global search (triggered by icon or CMD+K).
+  - [x] Mobile: Use **ShadCN Sheet** for the hamburger menu.
+- [x] Create a `Footer` component with social links and newsletter signup placeholder.
+- [x] Add Framer Motion for page transitions.
+- [x] Ensure the layout has a placeholder for the persistent music player at the bottom.
+- [x] Use **ShadCN DropdownMenu** for any user/admin menus.
+- [x] Wrap main content in **ShadCN ScrollArea** (optional, if custom scrollbar desired).
