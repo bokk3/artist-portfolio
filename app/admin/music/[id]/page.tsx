@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { ChevronLeft, Plus, Trash2 } from "lucide-react";
 import { notFound } from "next/navigation";
+import { AddTrackForm } from "@/components/add-track-form";
 
 export const dynamic = "force-dynamic";
 
@@ -65,67 +66,7 @@ export default async function EditReleasePage({
         <CardContent>
           <div className="space-y-6">
             {/* Add Track Form */}
-            <form
-              action={addTrack}
-              className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end border-b border-border/10 pb-6"
-            >
-              <input type="hidden" name="release_id" value={release.id} />
-              <input type="hidden" name="artist" value={release.artist} />
-
-              <div className="md:col-span-1">
-                <Label htmlFor="track_number" className="text-xs">
-                  #
-                </Label>
-                <Input
-                  id="track_number"
-                  name="track_number"
-                  type="number"
-                  defaultValue={tracks.length + 1}
-                />
-              </div>
-
-              <div className="md:col-span-4">
-                <Label htmlFor="title" className="text-xs">
-                  Title
-                </Label>
-                <Input
-                  id="title"
-                  name="title"
-                  placeholder="Track Title"
-                  required
-                />
-              </div>
-
-              <div className="md:col-span-4">
-                <Label htmlFor="audio_url" className="text-xs">
-                  Audio URL
-                </Label>
-                <Input
-                  id="audio_url"
-                  name="audio_url"
-                  placeholder="https://..."
-                  required
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <Label htmlFor="duration" className="text-xs">
-                  Secs
-                </Label>
-                <Input
-                  id="duration"
-                  name="duration"
-                  type="number"
-                  placeholder="180"
-                />
-              </div>
-
-              <div className="md:col-span-1">
-                <Button type="submit" size="icon" title="Add Track">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </form>
+            <AddTrackForm releaseId={release.id} artist={release.artist} defaultTrackNumber={tracks.length + 1} />
 
             {/* Tracks List */}
             <Table>

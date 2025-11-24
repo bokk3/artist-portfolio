@@ -19,7 +19,7 @@ interface FileUploadProps {
 export function FileUpload({
   type,
   accept = "image/*",
-  maxSize = 10 * 1024 * 1024, // 10MB default
+  maxSize = 25 * 1024 * 1024, // 25MB default
   onUploadComplete,
   currentUrl,
   className,

@@ -13,10 +13,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Validate file size (10MB max)
-    if (file.size > 10 * 1024 * 1024) {
+    // Validate file size (25MB max)
+    if (file.size > 25 * 1024 * 1024) {
       return NextResponse.json(
-        { error: "File too large (max 10MB)" },
+        { error: "File too large (max 25MB)" },
         { status: 400 }
       );
     }
@@ -24,15 +24,20 @@ export async function POST(request: NextRequest) {
     // Validate file type
     const allowedTypes = {
       image: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-      audio: ["audio/mpeg", "audio/wav", "audio/mp3"],
+      audio: ["audio/mpeg", "audio/mp3", "audio/wav", "audio/wave", "audio/x-wav", "audio/ogg", "audio/flac", "audio/aac", "audio/m4a"],
       video: ["video/mp4", "video/webm"],
     };
 
     const isImage = allowedTypes.image.includes(file.type);
     const isAudio = allowedTypes.audio.includes(file.type);
     const isVideo = allowedTypes.video.includes(file.type);
+    
+    // Also check by file extension for audio files (browsers sometimes send wrong MIME types)
+    const ext = path.extname(file.name).toLowerCase();
+    const audioExtensions = [".mp3", ".wav", ".ogg", ".flac", ".aac", ".m4a"];
+    const isAudioByExt = audioExtensions.includes(ext);
 
-    if (!isImage && !isAudio && !isVideo) {
+    if (!isImage && !isAudio && !isVideo && !isAudioByExt) {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
     }
 
@@ -51,8 +56,8 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 8);
-    const ext = path.extname(file.name);
-    const filename = `${timestamp}-${randomStr}${ext}`;
+    const fileExt = path.extname(file.name);
+    const filename = `${timestamp}-${randomStr}${fileExt}`;
     const filepath = path.join(uploadDir, filename);
 
     // Convert file to buffer and save
