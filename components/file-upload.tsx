@@ -77,9 +77,43 @@ export function FileUpload({
     [type, onUploadComplete]
   );
 
+  // Format accept prop for react-dropzone
+  const getAcceptConfig = () => {
+    if (!accept) return undefined;
+    
+    if (accept === "audio/*" || accept.includes("audio")) {
+      return {
+        "audio/*": [".mp3", ".wav", ".ogg", ".flac", ".aac", ".m4a"],
+        "audio/mpeg": [".mp3"],
+        "audio/mp3": [".mp3"],
+        "audio/wav": [".wav"],
+        "audio/wave": [".wav"],
+        "audio/x-wav": [".wav"],
+        "audio/ogg": [".ogg"],
+        "audio/flac": [".flac"],
+        "audio/aac": [".aac"],
+        "audio/mp4": [".m4a"],
+        "audio/x-m4a": [".m4a"],
+      };
+    }
+    
+    if (accept === "image/*" || accept.includes("image")) {
+      return {
+        "image/*": [".jpg", ".jpeg", ".png", ".webp", ".gif"],
+        "image/jpeg": [".jpg", ".jpeg"],
+        "image/png": [".png"],
+        "image/webp": [".webp"],
+        "image/gif": [".gif"],
+      };
+    }
+    
+    // Fallback to original format
+    return { [accept]: [] };
+  };
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: accept ? { [accept]: [] } : undefined,
+    accept: getAcceptConfig(),
     maxSize,
     multiple: false,
     disabled: uploading,
