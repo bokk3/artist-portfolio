@@ -73,7 +73,12 @@ export default async function BlogPostPage({
           </div>
         </div>
 
-        <ShareButtons title={post.title} url={`/blog/${slug}`} />
+        <ShareButtons
+          title={post.title}
+          url={`/blog/${slug}`}
+          description={post.excerpt || ""}
+          image={post.cover_image_url || ""}
+        />
       </div>
 
       {/* Cover Image */}

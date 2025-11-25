@@ -28,11 +28,18 @@ export default async function AdminMusicPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-display font-bold">Music Management</h1>
-        <Link href="/admin/music/new">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" /> Add Release
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/admin/music/import">
+            <Button variant="outline">
+              Import from SoundCloud
+            </Button>
+          </Link>
+          <Link href="/admin/music/new">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" /> Add Release
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="rounded-md border border-border/10 bg-card">

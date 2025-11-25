@@ -109,7 +109,8 @@ export function Player() {
       return;
     }
 
-    const mediaSession = navigator.mediaSession!;
+    const mediaSession = (navigator as any).mediaSession;
+    if (!mediaSession) return;
 
     // Set metadata for lock screen/notification
     updateMediaSessionMetadata(
@@ -119,46 +120,48 @@ export function Player() {
     );
 
     // Handle play action from lock screen/notification
-    mediaSession.setActionHandler("play", () => {
-      console.log("Media Session: Play");
-      togglePlay();
-    });
+    if (mediaSession.setActionHandler) {
+      mediaSession.setActionHandler("play", () => {
+        console.log("Media Session: Play");
+        togglePlay();
+      });
 
-    // Handle pause action
-    mediaSession.setActionHandler("pause", () => {
-      console.log("Media Session: Pause");
-      togglePlay();
-    });
+      // Handle pause action
+      mediaSession.setActionHandler("pause", () => {
+        console.log("Media Session: Pause");
+        togglePlay();
+      });
 
-    // Handle next track
-    mediaSession.setActionHandler("nexttrack", () => {
-      console.log("Media Session: Next");
-      playNext();
-    });
+      // Handle next track
+      mediaSession.setActionHandler("nexttrack", () => {
+        console.log("Media Session: Next");
+        playNext();
+      });
 
-    // Handle previous track
-    mediaSession.setActionHandler("previoustrack", () => {
-      console.log("Media Session: Previous");
-      playPrev();
-    });
+      // Handle previous track
+      mediaSession.setActionHandler("previoustrack", () => {
+        console.log("Media Session: Previous");
+        playPrev();
+      });
 
-    // Handle seek backward (optional)
-    mediaSession.setActionHandler("seekbackward", (details) => {
-      console.log("Media Session: Seek backward", details);
-      if (wavesurfer.current) {
-        const newTime = Math.max(0, wavesurfer.current.getCurrentTime() - (details.seekOffset || 10));
-        wavesurfer.current.seekTo(newTime / duration);
-      }
-    });
+      // Handle seek backward (optional)
+      mediaSession.setActionHandler("seekbackward", (details: any) => {
+        console.log("Media Session: Seek backward", details);
+        if (wavesurfer.current && details) {
+          const newTime = Math.max(0, wavesurfer.current.getCurrentTime() - (details.seekOffset || 10));
+          wavesurfer.current.seekTo(newTime / duration);
+        }
+      });
 
-    // Handle seek forward (optional)
-    mediaSession.setActionHandler("seekforward", (details) => {
-      console.log("Media Session: Seek forward", details);
-      if (wavesurfer.current) {
-        const newTime = Math.min(duration, wavesurfer.current.getCurrentTime() + (details.seekOffset || 10));
-        wavesurfer.current.seekTo(newTime / duration);
-      }
-    });
+      // Handle seek forward (optional)
+      mediaSession.setActionHandler("seekforward", (details: any) => {
+        console.log("Media Session: Seek forward", details);
+        if (wavesurfer.current && details) {
+          const newTime = Math.min(duration, wavesurfer.current.getCurrentTime() + (details.seekOffset || 10));
+          wavesurfer.current.seekTo(newTime / duration);
+        }
+      });
+    }
 
     // Update playback state
     updateMediaSessionPlaybackState(isPlaying);
@@ -177,12 +180,14 @@ export function Player() {
     return () => {
       clearInterval(positionInterval);
       // Clear action handlers
-      mediaSession.setActionHandler("play", null);
-      mediaSession.setActionHandler("pause", null);
-      mediaSession.setActionHandler("nexttrack", null);
-      mediaSession.setActionHandler("previoustrack", null);
-      mediaSession.setActionHandler("seekbackward", null);
-      mediaSession.setActionHandler("seekforward", null);
+      if (mediaSession.setActionHandler) {
+        mediaSession.setActionHandler("play", null);
+        mediaSession.setActionHandler("pause", null);
+        mediaSession.setActionHandler("nexttrack", null);
+        mediaSession.setActionHandler("previoustrack", null);
+        mediaSession.setActionHandler("seekbackward", null);
+        mediaSession.setActionHandler("seekforward", null);
+      }
     };
   }, [currentTrack, isPlaying, currentTime, duration, togglePlay, playNext, playPrev]);
 

@@ -87,8 +87,6 @@ export function AddTrackForm({
           maxSize={25 * 1024 * 1024}
           onUploadComplete={handleUploadComplete}
         />
-        {/* Debug: Check if type prop is being passed */}
-        {console.log("AddTrackForm: Rendering FileUpload with type='audio'")}
         <input type="hidden" name="audio_url" value={audioUrl} required />
         {audioUrl && (
           <div className="mt-2 flex items-center gap-2 text-xs text-green-500">
