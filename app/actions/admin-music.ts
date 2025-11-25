@@ -46,15 +46,19 @@ export async function addTrack(formData: FormData) {
   const title = formData.get("title") as string;
   const artist = formData.get("artist") as string;
   const audio_url = formData.get("audio_url") as string;
-  const duration = parseInt(formData.get("duration") as string) || 0;
+  const durationInput = formData.get("duration") as string;
+  const duration = durationInput && durationInput.trim() !== "" 
+    ? parseInt(durationInput) 
+    : null;
   const track_number = parseInt(formData.get("track_number") as string) || 1;
+  const waveform_data = formData.get("waveform_data") as string | null;
 
   const stmt = db.prepare(`
-    INSERT INTO tracks (release_id, title, artist, audio_url, duration, track_number)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO tracks (release_id, title, artist, audio_url, duration, track_number, waveform_data)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
 
-  stmt.run(release_id, title, artist, audio_url, duration, track_number);
+  stmt.run(release_id, title, artist, audio_url, duration, track_number, waveform_data || null);
   revalidatePath(`/music/${release_id}`);
   revalidatePath(`/admin/music/${release_id}`);
 }

@@ -21,7 +21,7 @@ type Track = {
   id: number;
   title: string;
   artist: string;
-  duration: number;
+  duration: number | null;
   audio_url: string;
   track_number: number;
   cover_image_url?: string; // Optional, from release
@@ -50,7 +50,8 @@ export function TrackList({
     }
   };
 
-  const formatTime = (seconds: number) => {
+  const formatTime = (seconds: number | null | undefined) => {
+    if (!seconds) return '-';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;

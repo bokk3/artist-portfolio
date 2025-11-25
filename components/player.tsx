@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { usePlayer } from "@/context/player-context";
 import WaveSurfer from "wavesurfer.js";
 import {
+  isMediaSessionSupported,
+  updateMediaSessionMetadata,
+  updateMediaSessionPlaybackState,
+  updateMediaSessionPosition,
+} from "@/lib/media-session";
+import {
   Play,
   Pause,
   SkipBack,
@@ -56,10 +62,17 @@ export function Player() {
       barRadius: 3,
       normalize: true,
       url: currentTrack.audioUrl,
+      // Enable background playback
+      backend: "WebAudio",
+      mediaControls: false, // We handle controls ourselves
     });
 
     wavesurfer.current.on("ready", () => {
       setDuration(wavesurfer.current?.getDuration() || 0);
+      
+      // Note: Media Session API handles background playback
+      // Audio element configuration is optional and not required for background playback
+      
       if (isPlaying) wavesurfer.current?.play();
     });
 
@@ -89,6 +102,89 @@ export function Player() {
       wavesurfer.current.setVolume(volume);
     }
   }, [volume]);
+
+  // Media Session API for background playback (mobile)
+  useEffect(() => {
+    if (!currentTrack || !isMediaSessionSupported()) {
+      return;
+    }
+
+    const mediaSession = navigator.mediaSession!;
+
+    // Set metadata for lock screen/notification
+    updateMediaSessionMetadata(
+      currentTrack.title,
+      currentTrack.artist,
+      currentTrack.coverImageUrl
+    );
+
+    // Handle play action from lock screen/notification
+    mediaSession.setActionHandler("play", () => {
+      console.log("Media Session: Play");
+      togglePlay();
+    });
+
+    // Handle pause action
+    mediaSession.setActionHandler("pause", () => {
+      console.log("Media Session: Pause");
+      togglePlay();
+    });
+
+    // Handle next track
+    mediaSession.setActionHandler("nexttrack", () => {
+      console.log("Media Session: Next");
+      playNext();
+    });
+
+    // Handle previous track
+    mediaSession.setActionHandler("previoustrack", () => {
+      console.log("Media Session: Previous");
+      playPrev();
+    });
+
+    // Handle seek backward (optional)
+    mediaSession.setActionHandler("seekbackward", (details) => {
+      console.log("Media Session: Seek backward", details);
+      if (wavesurfer.current) {
+        const newTime = Math.max(0, wavesurfer.current.getCurrentTime() - (details.seekOffset || 10));
+        wavesurfer.current.seekTo(newTime / duration);
+      }
+    });
+
+    // Handle seek forward (optional)
+    mediaSession.setActionHandler("seekforward", (details) => {
+      console.log("Media Session: Seek forward", details);
+      if (wavesurfer.current) {
+        const newTime = Math.min(duration, wavesurfer.current.getCurrentTime() + (details.seekOffset || 10));
+        wavesurfer.current.seekTo(newTime / duration);
+      }
+    });
+
+    // Update playback state
+    updateMediaSessionPlaybackState(isPlaying);
+
+    // Update position state (for lock screen progress)
+    const updatePositionState = () => {
+      if (wavesurfer.current && duration > 0) {
+        updateMediaSessionPosition(duration, currentTime);
+      }
+    };
+
+    // Update position state periodically
+    const positionInterval = setInterval(updatePositionState, 1000);
+    updatePositionState();
+
+    return () => {
+      clearInterval(positionInterval);
+      // Clear action handlers
+      mediaSession.setActionHandler("play", null);
+      mediaSession.setActionHandler("pause", null);
+      mediaSession.setActionHandler("nexttrack", null);
+      mediaSession.setActionHandler("previoustrack", null);
+      mediaSession.setActionHandler("seekbackward", null);
+      mediaSession.setActionHandler("seekforward", null);
+    };
+  }, [currentTrack, isPlaying, currentTime, duration, togglePlay, playNext, playPrev]);
 
   if (!currentTrack) return null;
 

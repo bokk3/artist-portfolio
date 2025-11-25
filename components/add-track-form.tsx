@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FileUpload } from "@/components/file-upload";
-import { Plus } from "lucide-react";
+import { Plus, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface AddTrackFormProps {
   releaseId: number;
@@ -20,15 +21,29 @@ export function AddTrackForm({
   defaultTrackNumber,
 }: AddTrackFormProps) {
   const [audioUrl, setAudioUrl] = useState("");
+  const [waveformData, setWaveformData] = useState<string>("");
   const [trackNumber, setTrackNumber] = useState(defaultTrackNumber);
+
+  const handleUploadComplete = (url: string, waveform?: string) => {
+    console.log("AddTrackForm: Received upload URL:", url, "Waveform:", waveform ? "yes" : "no");
+    setAudioUrl(url);
+    if (waveform) {
+      setWaveformData(waveform);
+    }
+    toast.success("Audio file ready! Fill in track details and click + to add.");
+  };
 
   async function handleSubmit(formData: FormData) {
     formData.set("audio_url", audioUrl);
     formData.set("release_id", releaseId.toString());
     formData.set("artist", artist);
+    if (waveformData) {
+      formData.set("waveform_data", waveformData);
+    }
     await addTrack(formData);
     // Reset form
     setAudioUrl("");
+    setWaveformData("");
     setTrackNumber((prev) => prev + 1);
   }
 
@@ -70,25 +85,40 @@ export function AddTrackForm({
           type="audio"
           accept="audio/*"
           maxSize={25 * 1024 * 1024}
-          onUploadComplete={setAudioUrl}
+          onUploadComplete={handleUploadComplete}
         />
+        {/* Debug: Check if type prop is being passed */}
+        {console.log("AddTrackForm: Rendering FileUpload with type='audio'")}
         <input type="hidden" name="audio_url" value={audioUrl} required />
+        {audioUrl && (
+          <div className="mt-2 flex items-center gap-2 text-xs text-green-500">
+            <CheckCircle2 className="h-3 w-3" />
+            <span>Audio file ready</span>
+          </div>
+        )}
       </div>
 
       <div className="md:col-span-2">
         <Label htmlFor="duration" className="text-xs">
-          Secs
+          Duration (secs) <span className="text-muted-foreground font-normal text-[10px]">(optional)</span>
         </Label>
         <Input
           id="duration"
           name="duration"
           type="number"
-          placeholder="180"
+          placeholder="Auto"
+          min="0"
         />
       </div>
 
       <div className="md:col-span-1">
-        <Button type="submit" size="icon" title="Add Track" disabled={!audioUrl}>
+        <Button 
+          type="submit" 
+          size="icon" 
+          title={audioUrl ? "Add Track" : "Upload audio file first"} 
+          disabled={!audioUrl}
+          className={audioUrl ? "bg-green-500 hover:bg-green-600" : ""}
+        >
           <Plus className="h-4 w-4" />
         </Button>
       </div>

@@ -100,7 +100,7 @@ export default async function EditReleasePage({
                         {track.audio_url}
                       </TableCell>
                       <TableCell className="text-right">
-                        {track.duration}s
+                        {track.duration ? `${track.duration}s` : '-'}
                       </TableCell>
                       <TableCell>
                         <form
