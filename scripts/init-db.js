@@ -53,7 +53,8 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     artist TEXT NOT NULL,
-    release_date TEXT NOT NULL,
+    type TEXT NOT NULL CHECK(type IN ('album', 'single', 'ep')),
+    release_date TEXT,
     cover_image_url TEXT,
     description TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -62,14 +63,17 @@ db.exec(`
   -- Tracks table
   CREATE TABLE IF NOT EXISTS tracks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    release_id INTEGER NOT NULL,
+    release_id INTEGER,
     title TEXT NOT NULL,
-    duration INTEGER,
-    audio_url TEXT,
+    artist TEXT NOT NULL,
+    audio_url TEXT NOT NULL,
     waveform_data TEXT,
+    duration INTEGER,
+    bpm INTEGER,
+    genre TEXT,
     track_number INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (release_id) REFERENCES releases(id) ON DELETE CASCADE
+    FOREIGN KEY (release_id) REFERENCES releases(id) ON DELETE SET NULL
   );
 
   -- Posts table
@@ -81,7 +85,7 @@ db.exec(`
     excerpt TEXT,
     cover_image_url TEXT,
     tags TEXT,
-    published INTEGER DEFAULT 0,
+    published BOOLEAN DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
@@ -93,7 +97,7 @@ db.exec(`
     venue TEXT NOT NULL,
     city TEXT NOT NULL,
     ticket_url TEXT,
-    status TEXT DEFAULT 'upcoming',
+    status TEXT DEFAULT 'upcoming' CHECK(status IN ('upcoming', 'sold_out', 'cancelled', 'past')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -103,7 +107,7 @@ db.exec(`
     title TEXT NOT NULL,
     video_url TEXT NOT NULL,
     thumbnail_url TEXT,
-    platform TEXT NOT NULL,
+    platform TEXT CHECK(platform IN ('youtube', 'vimeo', 'native')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -112,7 +116,8 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     image_url TEXT NOT NULL,
     caption TEXT,
-    category TEXT DEFAULT 'live',
+    category TEXT DEFAULT 'general' CHECK(category IN ('live', 'studio', 'press', 'general')),
+    display_order INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
