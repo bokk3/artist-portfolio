@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { useDropzone, type Accept } from "react-dropzone";
 import { Upload, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -78,7 +78,7 @@ export function FileUpload({
   );
 
   // Format accept prop for react-dropzone
-  const getAcceptConfig = () => {
+  const getAcceptConfig = (): Accept | undefined => {
     if (!accept) return undefined;
     
     if (accept === "audio/*" || accept.includes("audio")) {

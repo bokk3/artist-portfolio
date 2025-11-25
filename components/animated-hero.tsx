@@ -31,22 +31,24 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.8,
-      ease: "easeOut",
-    },
   },
+};
+
+const itemTransition = {
+  duration: 0.8,
+  ease: "easeOut" as const,
 };
 
 const floatingVariants = {
   animate: {
     y: [0, -20, 0],
-    transition: {
-      duration: 4,
-      repeat: Infinity,
-      ease: "easeInOut",
-    },
   },
+};
+
+const floatingTransition = {
+  duration: 4,
+  repeat: Infinity,
+  ease: "easeInOut" as const,
 };
 
 export function AnimatedHero({ latestRelease }: HeroProps) {
@@ -113,6 +115,7 @@ export function AnimatedHero({ latestRelease }: HeroProps) {
         <motion.h1
           className="text-6xl md:text-8xl lg:text-9xl font-display font-bold mb-6 tracking-tight"
           variants={itemVariants}
+          transition={itemTransition}
         >
           <motion.span
             className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500"
@@ -134,6 +137,7 @@ export function AnimatedHero({ latestRelease }: HeroProps) {
           <motion.span
             className="text-foreground"
             variants={itemVariants}
+            transition={itemTransition}
           >
             NAME
           </motion.span>
@@ -142,6 +146,7 @@ export function AnimatedHero({ latestRelease }: HeroProps) {
         <motion.p
           className="text-xl md:text-2xl lg:text-3xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed"
           variants={itemVariants}
+          transition={itemTransition}
         >
           Producer, Artist, Creator —{" "}
           <motion.span
@@ -156,6 +161,7 @@ export function AnimatedHero({ latestRelease }: HeroProps) {
         <motion.div
           className="flex flex-col sm:flex-row gap-6 justify-center items-center"
           variants={itemVariants}
+          transition={itemTransition}
         >
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link href="/music">
@@ -188,6 +194,7 @@ export function AnimatedHero({ latestRelease }: HeroProps) {
         className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10"
         variants={floatingVariants}
         animate="animate"
+        transition={floatingTransition}
       >
         <div className="w-6 h-10 rounded-full border-2 border-primary/50 flex items-start justify-center p-2 backdrop-blur-sm bg-background/20">
           <motion.div

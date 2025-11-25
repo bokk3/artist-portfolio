@@ -26,7 +26,6 @@ export function TrackCard({ track, index }: { track: Track; index: number }) {
       title: track.title,
       artist: track.artist,
       audioUrl: track.audio_url,
-      artworkUrl: null,
     });
   };
 
