@@ -19,6 +19,7 @@ import { FlowGuide } from "@/components/flow-guide";
 import Link from "next/link";
 import { ChevronLeft, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function NewReleasePage() {
   const [coverUrl, setCoverUrl] = useState("");
