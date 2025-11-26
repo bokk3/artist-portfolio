@@ -196,11 +196,11 @@ export default function NewReleasePage() {
                 )}
               </Label>
               <div className={currentStep === 3 ? "ring-2 ring-primary rounded-lg p-2" : ""}>
-                <FileUpload
-                  type="cover"
-                  accept="image/*"
-                  onUploadComplete={setCoverUrl}
-                />
+              <FileUpload
+                type="cover"
+                accept="image/*"
+                onUploadComplete={setCoverUrl}
+              />
               </div>
               <input type="hidden" name="cover_image_url" value={coverUrl} />
             </div>

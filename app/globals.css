@@ -197,6 +197,9 @@
     transform: translateZ(0) !important; /* Force hardware acceleration and new stacking context */
     isolation: isolate !important; /* Create new stacking context */
     will-change: auto !important;
+    margin: 0 !important;
+    padding: 0 1rem !important;
+    box-sizing: border-box !important;
   }
   
   /* Beat shake animation - use filter only to avoid creating containing block for fixed elements */

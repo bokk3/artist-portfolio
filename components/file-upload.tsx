@@ -620,15 +620,15 @@ export function FileUpload({
               )}
               <div className="flex flex-col items-center gap-1">
                 <p className="text-base font-semibold text-foreground">
-                  {isDragActive
-                    ? "Drop file here"
+                {isDragActive
+                  ? "Drop file here"
                     : type === "audio"
                     ? "Click to upload audio or drag and drop"
-                    : "Click to upload or drag and drop"}
-                </p>
-                <p className="text-xs text-muted-foreground">
+                  : "Click to upload or drag and drop"}
+              </p>
+              <p className="text-xs text-muted-foreground">
                   {type === "audio" ? "MP3, WAV, OGG, FLAC, AAC, M4A • " : ""}Max {Math.round(maxSize / 1024 / 1024)}MB
-                </p>
+              </p>
               </div>
             </div>
           )}

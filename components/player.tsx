@@ -579,30 +579,32 @@ export function Player() {
       </div>
   );
 
-  return (
-    <>
-      {/* Audio Visualizer - Background Effects */}
-      <BeatReactiveBackground
-        analyser={analyser}
-        isPlaying={isPlaying && !!currentTrack}
-      />
-      <AudioVisualizer
-        analyser={analyser}
-        isPlaying={isPlaying && !!currentTrack}
-      />
+  // Render everything via portal to document.body to ensure fixed positioning works
+  // Always render if we have a body element (client-side)
+  if (typeof window !== 'undefined' && document.body) {
+    return createPortal(
+      <>
+        {/* Audio Visualizer - Background Effects */}
+        <BeatReactiveBackground
+          analyser={analyser}
+          isPlaying={isPlaying && !!currentTrack}
+        />
+        <AudioVisualizer
+          analyser={analyser}
+          isPlaying={isPlaying && !!currentTrack}
+        />
+        {playerUI}
+        {/* Desktop Queue Sidebar */}
+        {showQueue && playlist.length > 0 && (
+          <div className="hidden md:block fixed bottom-20 right-4 w-80 h-[calc(100vh-8rem)] bg-background/95 backdrop-blur-xl border border-border/10 rounded-lg shadow-2xl z-40">
+            <QueueInterface />
+          </div>
+        )}
+      </>,
+      document.body
+    );
+  }
 
-      {/* Render player via portal to document.body to ensure fixed positioning works */}
-      {mounted && typeof window !== 'undefined' && createPortal(
-        playerUI,
-        document.body
-      )}
-
-      {/* Desktop Queue Sidebar */}
-      {showQueue && playlist.length > 0 && (
-        <div className="hidden md:block fixed bottom-20 right-4 w-80 h-[calc(100vh-8rem)] bg-background/95 backdrop-blur-xl border border-border/10 rounded-lg shadow-2xl z-40">
-          <QueueInterface />
-        </div>
-      )}
-    </>
-  );
+  // Return null only on server-side
+  return null;
 }

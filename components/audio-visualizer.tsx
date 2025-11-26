@@ -146,7 +146,14 @@ export function BeatReactiveBackground({
       
       // Store frequency data for drawing
       let currentFrequencyData: Uint8Array | null = null;
-      let hasReceivedData = false;
+      
+      // Start analyzer FIRST to get data flowing
+      analyzer.start(
+        undefined, // No beat callback needed here, we draw continuously
+        (frequencyData) => {
+          currentFrequencyData = frequencyData;
+        }
+      );
       
       // Draw function for the visualizer
       const draw = () => {
@@ -157,13 +164,10 @@ export function BeatReactiveBackground({
         
         // If we don't have frequency data yet, keep drawing (showing static background)
         if (!currentFrequencyData) {
+          ctx.fillStyle = "#0a1929";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
           animationFrameRef.current = requestAnimationFrame(draw);
           return;
-        }
-        
-        // Mark that we've received data
-        if (!hasReceivedData) {
-          hasReceivedData = true;
         }
         
         // Clear with minimal fade for more visible effects
@@ -250,15 +254,8 @@ export function BeatReactiveBackground({
         animationFrameRef.current = requestAnimationFrame(draw);
       };
       
-      // Start the draw loop
+      // Start the draw loop AFTER analyzer is started
       draw();
-      
-      analyzer.start(
-        undefined, // No beat callback needed here, we draw continuously
-        (frequencyData) => {
-          currentFrequencyData = frequencyData;
-        }
-      );
     } catch (error) {
       console.error("❌ Failed to initialize audio analyzer:", error);
     }
@@ -283,7 +280,7 @@ export function BeatReactiveBackground({
       style={{
         background: "transparent", // Transparent so we can see the effects
         transition: "opacity 0.3s ease-in-out",
-        zIndex: -1, // Behind everything
+        zIndex: 1, // Changed from 0 to 1 - above body background but below content
         position: "fixed",
         top: 0,
         left: 0,

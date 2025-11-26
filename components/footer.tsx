@@ -150,9 +150,9 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-border/10 pt-8 text-center text-sm text-muted-foreground">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <p>
-              © {new Date().getFullYear()} Artist Portfolio. All rights reserved.
-            </p>
+          <p>
+            © {new Date().getFullYear()} Artist Portfolio. All rights reserved.
+          </p>
             <span className="text-xs font-mono text-muted-foreground/70">
               • v{process.env.NEXT_PUBLIC_APP_VERSION || "dev"}
             </span>
