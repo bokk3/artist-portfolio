@@ -1,0 +1,21 @@
+{
+  "name": "Artist Portfolio",
+  "short_name": "Artist",
+  "description": "Official music portfolio - Producer, artist, and sonic architect.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1929",
+  "theme_color": "#0a1929",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

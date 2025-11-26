@@ -17,7 +17,7 @@ type Track = {
   waveformData?: string; // JSON string
 };
 
-export type RepeatMode = 'off' | 'all' | 'one';
+export type RepeatMode = "off" | "all" | "one";
 
 type PlayerContextType = {
   currentTrack: Track | null;
@@ -30,16 +30,19 @@ type PlayerContextType = {
   setVolume: (volume: number) => void;
   toggleShuffle: () => void;
   toggleRepeat: () => void;
-  playNext: () => void;
-  playPrev: () => void;
-  playlist: Track[];
-  setPlaylist: (tracks: Track[]) => void;
-  addToQueue: (tracks: Track[]) => void;
-  removeTrack: (trackId: number) => void;
   reorderTracks: (fromIndex: number, toIndex: number) => void;
   clearQueue: () => void;
   stop: () => void;
+  playNext: () => void; // Plays next in sequence
+  playPrev: () => void;
+  playlist: Track[];
+  setPlaylist: (tracks: Track[]) => void;
+  removeTrack: (trackId: number) => void;
+  addToQueue: (tracks: Track[]) => void; // Appends to end
+  playNextInQueue: (track: Track) => void; // Inserts right after current
 };
+
+const STORAGE_KEY = "artist_portfolio_player_state_v1";
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
@@ -49,8 +52,45 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [volume, setVolume] = useState(0.8);
   const [playlist, setPlaylist] = useState<Track[]>([]);
   const [shuffle, setShuffle] = useState(false);
-  const [repeat, setRepeat] = useState<RepeatMode>('off');
+  const [repeat, setRepeat] = useState<RepeatMode>("off");
   const [shuffledPlaylist, setShuffledPlaylist] = useState<Track[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Load state from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedState = localStorage.getItem(STORAGE_KEY);
+      if (savedState) {
+        const parsed = JSON.parse(savedState);
+        if (parsed.volume !== undefined) setVolume(parsed.volume);
+        if (parsed.shuffle !== undefined) setShuffle(parsed.shuffle);
+        if (parsed.repeat !== undefined) setRepeat(parsed.repeat);
+        if (parsed.playlist) setPlaylist(parsed.playlist);
+        // Don't auto-play, but restore current track
+        if (parsed.currentTrack) setCurrentTrack(parsed.currentTrack);
+      }
+    } catch (e) {
+      console.error("Failed to load player state:", e);
+    }
+    setIsInitialized(true);
+  }, []);
+
+  // Save state to localStorage
+  useEffect(() => {
+    if (!isInitialized) return;
+    try {
+      const stateToSave = {
+        volume,
+        shuffle,
+        repeat,
+        playlist,
+        currentTrack,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+    } catch (e) {
+      console.error("Failed to save player state:", e);
+    }
+  }, [volume, shuffle, repeat, playlist, currentTrack, isInitialized]);
 
   const stop = () => {
     setIsPlaying(false);
@@ -86,58 +126,64 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   const toggleRepeat = () => {
     setRepeat((prev) => {
-      if (prev === 'off') return 'all';
-      if (prev === 'all') return 'one';
-      return 'off';
+      if (prev === "off") return "all";
+      if (prev === "all") return "one";
+      return "off";
     });
   };
 
   const playNext = () => {
     if (!currentTrack || playlist.length === 0) return;
-    
-    const activePlaylist = shuffle && shuffledPlaylist.length > 0 ? shuffledPlaylist : playlist;
-    const currentIndex = activePlaylist.findIndex((t) => t.id === currentTrack.id);
-    
-    if (repeat === 'one') {
+
+    const activePlaylist =
+      shuffle && shuffledPlaylist.length > 0 ? shuffledPlaylist : playlist;
+    const currentIndex = activePlaylist.findIndex(
+      (t) => t.id === currentTrack.id
+    );
+
+    if (repeat === "one") {
       // Repeat current track
       playTrack(currentTrack);
       return;
     }
-    
+
     if (currentIndex === -1 || currentIndex === activePlaylist.length - 1) {
       // End of playlist
-      if (repeat === 'all') {
+      if (repeat === "all") {
         // Loop back to start
         playTrack(activePlaylist[0]);
       }
       return;
     }
-    
+
     const nextIndex = currentIndex + 1;
     playTrack(activePlaylist[nextIndex]);
   };
 
   const playPrev = () => {
     if (!currentTrack || playlist.length === 0) return;
-    
-    const activePlaylist = shuffle && shuffledPlaylist.length > 0 ? shuffledPlaylist : playlist;
-    const currentIndex = activePlaylist.findIndex((t) => t.id === currentTrack.id);
-    
-    if (repeat === 'one') {
+
+    const activePlaylist =
+      shuffle && shuffledPlaylist.length > 0 ? shuffledPlaylist : playlist;
+    const currentIndex = activePlaylist.findIndex(
+      (t) => t.id === currentTrack.id
+    );
+
+    if (repeat === "one") {
       // Repeat current track
       playTrack(currentTrack);
       return;
     }
-    
+
     if (currentIndex <= 0) {
       // Start of playlist
-      if (repeat === 'all') {
+      if (repeat === "all") {
         // Loop to end
         playTrack(activePlaylist[activePlaylist.length - 1]);
       }
       return;
     }
-    
+
     const prevIndex = currentIndex - 1;
     playTrack(activePlaylist[prevIndex]);
   };
@@ -153,15 +199,30 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const removeTrack = (trackId: number) => {
     // Don't remove the currently playing track
     if (currentTrack?.id === trackId) return;
-    
+
     setPlaylist(playlist.filter((t) => t.id !== trackId));
   };
 
   const reorderTracks = (fromIndex: number, toIndex: number) => {
-    const newPlaylist = [...playlist];
-    const [removed] = newPlaylist.splice(fromIndex, 1);
-    newPlaylist.splice(toIndex, 0, removed);
-    setPlaylist(newPlaylist);
+    setPlaylist((prev) => {
+      const newPlaylist = [...prev];
+      const [removed] = newPlaylist.splice(fromIndex, 1);
+      newPlaylist.splice(toIndex, 0, removed);
+      return newPlaylist;
+    });
+  };
+
+  const playNextInQueue = (track: Track) => {
+    setPlaylist((prev) => {
+      if (!currentTrack) return [...prev, track];
+
+      const currentIndex = prev.findIndex((t) => t.id === currentTrack.id);
+      if (currentIndex === -1) return [...prev, track];
+
+      const newPlaylist = [...prev];
+      newPlaylist.splice(currentIndex + 1, 0, track);
+      return newPlaylist;
+    });
   };
 
   const addToQueue = (tracksToAdd: Track[]) => {
@@ -199,6 +260,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         playlist,
         setPlaylist,
         addToQueue,
+        playNextInQueue,
         removeTrack,
         reorderTracks,
         clearQueue,

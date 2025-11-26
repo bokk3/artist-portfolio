@@ -10,4 +10,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Only use PWA in production to avoid Turbopack compatibility issues
+const config =
+  process.env.NODE_ENV === "development"
+    ? nextConfig
+    : require("next-pwa")({
+        dest: "public",
+        register: true,
+        skipWaiting: true,
+        disable: process.env.NODE_ENV === "development",
+      })(nextConfig);
+
+export default config;

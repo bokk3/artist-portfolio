@@ -22,6 +22,7 @@ import {
   Shuffle,
   Repeat,
   Repeat1,
+  Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -81,6 +82,8 @@ export function Player() {
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [audioManagerReady, setAudioManagerReady] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [hasRecordedPlay, setHasRecordedPlay] = useState(false);
+  const playTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize AudioManager and WaveSurfer
   useEffect(() => {
@@ -231,6 +234,41 @@ export function Player() {
       }
     };
   }, [currentTrack]); // Only re-initialize when track changes
+
+  // Reset play tracking when track changes
+  useEffect(() => {
+    setHasRecordedPlay(false);
+    if (playTimerRef.current) {
+      clearTimeout(playTimerRef.current);
+      playTimerRef.current = null;
+    }
+  }, [currentTrack]);
+
+  // Track play after 30 seconds
+  useEffect(() => {
+    if (isPlaying && !hasRecordedPlay && currentTrack) {
+      playTimerRef.current = setTimeout(async () => {
+        try {
+          await fetch("/api/analytics/track-play", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ trackId: currentTrack.id }),
+          });
+          setHasRecordedPlay(true);
+        } catch (error) {
+          console.error("Failed to record play:", error);
+        }
+      }, 30000);
+    } else if (!isPlaying && playTimerRef.current) {
+      clearTimeout(playTimerRef.current);
+    }
+
+    return () => {
+      if (playTimerRef.current) {
+        clearTimeout(playTimerRef.current);
+      }
+    };
+  }, [isPlaying, hasRecordedPlay, currentTrack]);
 
   // Handle Play/Pause with AudioManager
   useEffect(() => {
@@ -426,7 +464,7 @@ export function Player() {
   const playerUI = currentTrack ? (
     <div
       data-player="true"
-      className="bg-background/80 backdrop-blur-xl border-t border-border/10 flex items-center px-4 gap-4 shadow-lg"
+      className="bg-background/80 backdrop-blur-xl border-t border-border/10 flex items-center px-4 gap-4 shadow-lg relative"
       style={
         {
           position: "fixed",
@@ -468,7 +506,7 @@ export function Player() {
       </div>
 
       {/* Controls & Waveform */}
-      <div className="flex-1 flex flex-col items-center justify-center gap-1">
+      <div className="flex-1 flex flex-col items-center justify-center gap-1 md:absolute md:left-1/2 md:-translate-x-1/2 md:w-1/2 md:max-w-2xl">
         <div className="flex items-center gap-2 md:gap-4">
           <Button
             variant="ghost"
@@ -524,6 +562,19 @@ export function Player() {
             ) : (
               <Repeat className="h-5 w-5 md:h-4 md:w-4" />
             )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              const url = new URL(window.location.href);
+              url.searchParams.set("t", Math.floor(currentTime).toString());
+              navigator.clipboard.writeText(url.toString());
+              // Ideally show a toast here
+            }}
+            className="h-10 w-10 md:h-8 md:w-8 text-muted-foreground hover:text-primary touch-manipulation"
+          >
+            <Share2 className="h-5 w-5 md:h-4 md:w-4" />
           </Button>
         </div>
         <div className="w-full flex items-center gap-2 text-xs text-muted-foreground font-mono">

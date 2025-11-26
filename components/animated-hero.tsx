@@ -163,7 +163,7 @@ export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
         </motion.p>
 
         <motion.div
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+          className="flex flex-col gap-6 justify-center items-center"
           variants={itemVariants}
           transition={itemTransition}
         >
@@ -193,9 +193,8 @@ export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
         </motion.div>
       </motion.div>
 
-      {/* Animated Scroll Indicator */}
       <motion.div
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10"
+        className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10"
         variants={floatingVariants}
         animate="animate"
         transition={floatingTransition}
@@ -211,6 +210,3 @@ export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
     </section>
   );
 }
-
-
-

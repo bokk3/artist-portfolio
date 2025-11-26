@@ -4,13 +4,7 @@ import { usePlayer } from "@/context/player-context";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import {
-  X,
-  Play,
-  GripVertical,
-  Music2,
-  Trash2,
-} from "lucide-react";
+import { X, Play, GripVertical, Music2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -20,6 +14,7 @@ export function QueueInterface() {
     currentTrack,
     playTrack,
     removeTrack,
+    reorderTracks,
     clearQueue,
   } = usePlayer();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -53,11 +48,17 @@ export function QueueInterface() {
   };
 
   const handleDragEnd = () => {
-    if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
+    if (
+      draggedIndex !== null &&
+      dragOverIndex !== null &&
+      draggedIndex !== dragOverIndex
+    ) {
+      // Calculate actual indices in the full playlist
+      // upcomingTracks is a slice starting after currentIndex
       const actualFromIndex = currentIndex + 1 + draggedIndex;
       const actualToIndex = currentIndex + 1 + dragOverIndex;
-      // Note: reorderTracks would need to be implemented in context
-      // For now, we'll just reset the drag state
+
+      reorderTracks(actualFromIndex, actualToIndex);
     }
     setDraggedIndex(null);
     setDragOverIndex(null);
@@ -70,7 +71,8 @@ export function QueueInterface() {
         <div>
           <h3 className="text-sm font-semibold">Queue</h3>
           <p className="text-xs text-muted-foreground">
-            {upcomingTracks.length} {upcomingTracks.length === 1 ? "track" : "tracks"} upcoming
+            {upcomingTracks.length}{" "}
+            {upcomingTracks.length === 1 ? "track" : "tracks"} upcoming
           </p>
         </div>
         {upcomingTracks.length > 0 && (
@@ -101,7 +103,9 @@ export function QueueInterface() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{currentTrack.title}</p>
+              <p className="text-sm font-semibold truncate">
+                {currentTrack.title}
+              </p>
               <p className="text-xs text-muted-foreground truncate">
                 {currentTrack.artist}
               </p>
@@ -166,7 +170,9 @@ export function QueueInterface() {
 
                     {/* Track Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{track.title}</p>
+                      <p className="text-sm font-medium truncate">
+                        {track.title}
+                      </p>
                       <p className="text-xs text-muted-foreground truncate">
                         {track.artist}
                       </p>
@@ -201,4 +207,3 @@ export function QueueInterface() {
     </div>
   );
 }
-

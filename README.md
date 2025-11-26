@@ -240,6 +240,15 @@ Built with ❤️ in Belgium by [truyens.pro](https://truyens.pro)
 
 ## 📝 Changelog
 
+### v1.3.0 - Battle-Tested Player & PWA
+
+- **New**: Battle-Tested Player with `localStorage` persistence and advanced queue management.
+- **New**: PWA Support - Installable app with offline capabilities.
+- **New**: Analytics - Track plays (30s threshold) and store in database.
+- **New**: Social Sharing - Share tracks with timestamp deep-links.
+- **Improved**: UI Polish - Centered hero buttons and player controls.
+- **Fixed**: Turbopack compatibility issues.
+
 ### v1.2.2
 
 - **Fixed**: Player positioning issue where it would render off-screen or overlap content.
