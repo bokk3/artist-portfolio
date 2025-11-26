@@ -9,6 +9,7 @@ import { TrackCard } from "@/components/track-card";
 import { AnimatedHero } from "@/components/animated-hero";
 import { ArrowRight, Music2, Video, BookOpen } from "lucide-react";
 import { SectionWrapper } from "@/components/section-wrapper";
+import { getSetting } from "@/app/actions/admin-settings";
 
 export const dynamic = "force-dynamic";
 
@@ -57,11 +58,12 @@ export default async function HomePage() {
   const featuredTracks = await getFeaturedTracks();
   const recentVideos = await getRecentVideos();
   const recentPosts = await getRecentPosts();
+  const heroImage = await getSetting("hero_image");
 
   return (
     <div className="min-h-screen">
       {/* Animated Hero Section */}
-      <AnimatedHero latestRelease={latestRelease} />
+      <AnimatedHero latestRelease={latestRelease} heroImage={heroImage} />
 
       {/* Latest Release Highlight */}
       {latestRelease && (

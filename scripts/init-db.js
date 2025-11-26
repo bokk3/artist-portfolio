@@ -128,9 +128,24 @@ db.exec(`
     email TEXT UNIQUE NOT NULL,
     subscribed_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  -- Settings table
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT
+  );
 `);
 
 console.log("✅ Tables created successfully");
+
+// Initialize default settings
+db.exec(`
+  INSERT OR IGNORE INTO settings (key, value) VALUES 
+  ('site_title', 'Artist Portfolio'),
+  ('contact_email', 'booking@artist.com'),
+  ('hero_image', '');
+`);
+console.log("✅ Default settings initialized");
 
 // Create default admin user if none exists
 const bcrypt = require("bcryptjs");

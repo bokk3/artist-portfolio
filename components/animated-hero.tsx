@@ -13,6 +13,7 @@ type HeroProps = {
     artist: string;
     cover_image_url: string;
   } | null;
+  heroImage?: string | null;
 };
 
 const containerVariants = {
@@ -51,11 +52,14 @@ const floatingTransition = {
   ease: "easeInOut" as const,
 };
 
-export function AnimatedHero({ latestRelease }: HeroProps) {
+export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
+  // Use custom hero image if provided, otherwise fall back to latest release cover
+  const backgroundImageUrl = heroImage || latestRelease?.cover_image_url;
+
   return (
     <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
       {/* Animated Background Image */}
-      {latestRelease?.cover_image_url && (
+      {backgroundImageUrl && (
         <motion.div
           className="absolute inset-0 z-0"
           initial={{ scale: 1.1, opacity: 0 }}
@@ -63,7 +67,7 @@ export function AnimatedHero({ latestRelease }: HeroProps) {
           transition={{ duration: 1.5, ease: "easeOut" }}
         >
           <Image
-            src={latestRelease.cover_image_url}
+            src={backgroundImageUrl}
             alt="Hero background"
             fill
             className="object-cover blur-3xl opacity-20"

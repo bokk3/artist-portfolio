@@ -50,6 +50,27 @@ try {
     console.log("✅ Created 'newsletter_subscribers' table");
   }
 
+  // Create settings table if it doesn't exist
+  if (!tables.includes("settings")) {
+    console.log("➕ Creating 'settings' table...");
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT
+      );
+    `);
+    console.log("✅ Created 'settings' table");
+    
+    // Initialize default settings
+    db.exec(`
+      INSERT OR IGNORE INTO settings (key, value) VALUES 
+      ('site_title', 'Artist Portfolio'),
+      ('contact_email', 'booking@artist.com'),
+      ('hero_image', '');
+    `);
+    console.log("✅ Initialized default settings");
+  }
+
   // Check if releases table exists and get its columns
   if (!tables.includes("releases")) {
     console.log("❌ 'releases' table is missing. Please run 'npm run db:init' first.");

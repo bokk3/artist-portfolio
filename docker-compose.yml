@@ -24,10 +24,10 @@ services:
 
     volumes:
       # Database persistence
-      - ./data/db:/app/db
+      - portfolio_db:/app/db
 
       # File uploads (public directory)
-      - ./data/uploads:/app/public/uploads
+      - portfolio_uploads:/app/public/uploads
 
     restart: unless-stopped
 
@@ -45,6 +45,16 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+volumes:
+  # Named volume for database persistence
+  portfolio_db:
+    driver: local
+
+  # Named volume for file uploads
+  portfolio_uploads:
+    driver: local
+
 # Optional: Add a reverse proxy with SSL
 # Uncomment if you want nginx with automatic SSL
 #

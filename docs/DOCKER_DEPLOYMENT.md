@@ -63,53 +63,78 @@ Use your `ADMIN_EMAIL` and `ADMIN_PASSWORD` from the `.env` file.
 
 ## Volume Strategy
 
-### Database Volume (`./data/db`)
+This deployment uses **named Docker volumes** for data persistence. Volumes are managed by Docker and provide better portability and isolation.
+
+### Database Volume (`portfolio_db`)
 
 **What it does:**
 
 - Persists SQLite database across container restarts
 - Automatically initialized on first run
 - Includes WAL files for better performance
+- Managed by Docker (not in local filesystem)
 
-**Location:** `./data/db/artist.db`
+**Volume Name:** `portfolio_db`
+
+**Accessing the database:**
+
+```bash
+# Inspect volume location
+docker volume inspect portfolio_db
+
+# Access database via temporary container
+docker run --rm -v portfolio_db:/data -it alpine sh
+# Then: sqlite3 /data/artist.db
+```
 
 **Backup:**
 
 ```bash
-# Create backup
-cp data/db/artist.db backups/artist-$(date +%Y%m%d).db
+# Create backup using temporary container
+docker run --rm -v portfolio_db:/data -v $(pwd)/backups:/backup \
+  alpine sh -c "cp /data/artist.db /backup/artist-$(date +%Y%m%d).db"
 
 # Restore from backup
 docker-compose down
-cp backups/artist-20231124.db data/db/artist.db
+docker run --rm -v portfolio_db:/data -v $(pwd)/backups:/backup \
+  alpine sh -c "cp /backup/artist-20231124.db /data/artist.db"
 docker-compose up -d
 ```
 
-### Uploads Volume (`./data/uploads`)
+### Uploads Volume (`portfolio_uploads`)
 
 **What it does:**
 
 - Stores user-uploaded files (images, audio, etc.)
 - Persists across container updates
 - Accessible via `/uploads/` URL path
+- Managed by Docker (not in local filesystem)
+
+**Volume Name:** `portfolio_uploads`
 
 **Structure:**
 
 ```
-data/uploads/
-├── covers/       # Album/release cover images
-├── tracks/       # Audio files
+uploads/
+├── cover/        # Album/release cover images
+├── audio/         # Audio files
 ├── gallery/      # Gallery images
 ├── blog/         # Blog post images
-└── press/        # Press kit files
+└── misc/         # Other files
 ```
 
-**Important:** Create subdirectories if needed:
+**Accessing uploads:**
 
 ```bash
-mkdir -p data/uploads/{covers,tracks,gallery,blog,press}
-chmod -R 755 data/uploads
+# List files in volume
+docker run --rm -v portfolio_uploads:/data alpine ls -la /data
+
+# Copy files from volume
+docker run --rm -v portfolio_uploads:/data -v $(pwd)/backups:/backup \
+  alpine sh -c "cp -r /data /backup/uploads-$(date +%Y%m%d)"
 ```
+
+**Note:** Subdirectories are automatically created by the application when needed.
 
 ## File Upload Configuration
 
@@ -188,14 +213,22 @@ docker-compose logs -f app
 
 - `NEXT_PUBLIC_BASE_URL` - Your domain URL
 
-### 4. Permissions
+### 4. Volume Management
 
-Ensure correct permissions for volumes:
+**List volumes:**
 
 ```bash
-# The container runs as user 1001
-sudo chown -R 1001:1001 data/
+docker volume ls | grep portfolio
 ```
+
+**Inspect volume details:**
+
+```bash
+docker volume inspect portfolio_db
+docker volume inspect portfolio_uploads
+```
+
+**Note:** With named volumes, Docker manages permissions automatically. The container runs as user 1001 and has proper access to the volumes.
 
 ## Common Operations
 
@@ -230,21 +263,20 @@ docker-compose up -d
 **Access database:**
 
 ```bash
-# Install sqlite3
-apt-get install sqlite3
-
-# Query database
-sqlite3 data/db/artist.db "SELECT * FROM users;"
+# Query database using temporary container
+docker run --rm -v portfolio_db:/data alpine sh -c \
+  "apk add sqlite3 && sqlite3 /data/artist.db 'SELECT * FROM users;'"
 
 # Interactive mode
-sqlite3 data/db/artist.db
+docker run --rm -it -v portfolio_db:/data alpine sh -c \
+  "apk add sqlite3 && sqlite3 /data/artist.db"
 ```
 
 **Reset database:**
 
 ```bash
-docker-compose down
-rm data/db/artist.db*
+# Remove the volume (this deletes all data!)
+docker-compose down -v portfolio_db
 docker-compose up -d
 # Database will be re-initialized with default admin
 ```
@@ -263,13 +295,16 @@ curl http://localhost:3000/
 
 ### Database Not Created
 
-**Issue:** No database file in `data/db/`
+**Issue:** Database not initialized
 
 **Solution:**
 
 ```bash
 # Check logs
 docker-compose logs app | grep -i database
+
+# Check if volume exists
+docker volume inspect portfolio_db
 
 # Rebuild and restart
 docker-compose down
@@ -283,8 +318,15 @@ docker-compose up --build
 **Solution:**
 
 ```bash
-sudo chown -R 1001:1001 data/
+# Check volume permissions
+docker volume inspect portfolio_db
+
+# Restart container (Docker manages permissions automatically)
 docker-compose restart app
+
+# If issues persist, recreate volumes
+docker-compose down -v
+docker-compose up -d
 ```
 
 ### Can't Login to Admin
@@ -298,11 +340,11 @@ docker-compose restart app
 docker-compose exec app printenv | grep ADMIN
 
 # Verify database has user
-sqlite3 data/db/artist.db "SELECT email FROM users;"
+docker run --rm -v portfolio_db:/data alpine sh -c \
+  "apk add sqlite3 && sqlite3 /data/artist.db 'SELECT email FROM users;'"
 
-# Reset admin password
-docker-compose down
-rm data/db/artist.db
+# Reset admin password (recreate database volume)
+docker-compose down -v portfolio_db
 docker-compose up -d
 ```
 
@@ -316,10 +358,13 @@ docker-compose up -d
 # Check volume mount
 docker-compose exec app ls -la /app/public/uploads
 
-# Verify volume in compose file
-docker-compose config | grep uploads
+# Verify volume exists
+docker volume inspect portfolio_uploads
 
-# Recreate with volumes
+# Check volume contents
+docker run --rm -v portfolio_uploads:/data alpine ls -la /data
+
+# Recreate volumes if needed
 docker-compose down -v
 docker-compose up -d
 ```
@@ -375,11 +420,15 @@ docker-compose logs --tail=100 -f
 ### Database Size
 
 ```bash
-du -h data/db/artist.db
+# Check database size
+docker run --rm -v portfolio_db:/data alpine sh -c \
+  "du -h /data/artist.db"
 ```
 
 ### Upload Storage
 
 ```bash
-du -sh data/uploads/
+# Check uploads directory size
+docker run --rm -v portfolio_uploads:/data alpine sh -c \
+  "du -sh /data"
 ```
