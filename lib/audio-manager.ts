@@ -11,6 +11,7 @@ export class AudioManager {
   private analyser: AnalyserNode | null = null;
   private gainNode: GainNode | null = null;
   private isInitialized: boolean = false;
+  private isInitializing: boolean = false;
   private currentUrl: string | null = null;
 
   /**
@@ -18,14 +19,25 @@ export class AudioManager {
    * Creates the audio graph: audioElement -> source -> analyser -> gain -> destination
    */
   async initialize(url: string): Promise<void> {
-    // Cleanup existing instance if any
+    // Prevent multiple simultaneous initializations
+    if (this.isInitializing) {
+      throw new Error('AudioManager is already initializing');
+    }
+
+    // Cleanup existing instance if any (but don't set isInitializing yet)
     this.cleanup();
 
+    this.isInitializing = true;
     this.currentUrl = url;
 
     try {
       // Create AudioContext
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      // Verify audioContext was created
+      if (!this.audioContext) {
+        throw new Error('Failed to create AudioContext');
+      }
 
       // Resume audio context if suspended (required by some browsers)
       if (this.audioContext.state === 'suspended') {
@@ -37,6 +49,9 @@ export class AudioManager {
       this.audioElement.src = url;
       this.audioElement.crossOrigin = 'anonymous';
       this.audioElement.preload = 'auto';
+      // Add to DOM (hidden) - required for some browsers
+      this.audioElement.style.display = 'none';
+      document.body.appendChild(this.audioElement);
 
       // Wait for audio to be ready
       await new Promise<void>((resolve, reject) => {
@@ -65,7 +80,10 @@ export class AudioManager {
         this.audioElement!.load();
       });
 
-      // Create analyser node
+      // Create analyser node - verify audioContext is still valid
+      if (!this.audioContext) {
+        throw new Error('AudioContext is null - cleanup may have been called during initialization');
+      }
       this.analyser = this.audioContext.createAnalyser();
       this.analyser.fftSize = 512;
       this.analyser.smoothingTimeConstant = 0.3;
@@ -77,6 +95,8 @@ export class AudioManager {
       this.gainNode.gain.value = 1.0;
 
       // Create source from audio element
+      // IMPORTANT: Once you create MediaElementAudioSourceNode, you must use the audio element's play() method
+      // The source node just taps into the audio stream
       this.source = this.audioContext.createMediaElementSource(this.audioElement);
 
       // Connect audio graph: source -> analyser -> gain -> destination
@@ -85,8 +105,10 @@ export class AudioManager {
       this.gainNode.connect(this.audioContext.destination);
 
       this.isInitialized = true;
+      this.isInitializing = false;
     } catch (error) {
       console.error('❌ Failed to initialize AudioManager:', error);
+      this.isInitializing = false;
       this.cleanup();
       throw error;
     }
@@ -120,7 +142,12 @@ export class AudioManager {
     if (!this.audioElement) {
       throw new Error('AudioManager not initialized');
     }
-    await this.audioElement.play();
+    try {
+      await this.audioElement.play();
+    } catch (error) {
+      console.error('❌ Failed to play audio:', error);
+      throw error;
+    }
   }
 
   /**
@@ -239,6 +266,12 @@ export class AudioManager {
    * Cleanup resources
    */
   cleanup(): void {
+    // Don't cleanup if we're in the middle of initialization
+    if (this.isInitializing) {
+      console.warn('⚠️ Cleanup called during initialization - skipping to prevent race condition');
+      return;
+    }
+
     // Remove event listeners and pause
     if (this.audioElement) {
       this.audioElement.pause();
@@ -286,6 +319,7 @@ export class AudioManager {
     this.audioContext = null;
 
     this.isInitialized = false;
+    this.isInitializing = false;
     this.currentUrl = null;
   }
 }

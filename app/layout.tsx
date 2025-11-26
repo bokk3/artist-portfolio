@@ -85,7 +85,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col relative`}
+        className={`${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col`}
+        style={{ overflowX: 'hidden' }}
       >
         <PlayerProvider>
           {/* Audio Visualizer Background - rendered in Player component */}
@@ -95,12 +96,12 @@ export default function RootLayout({
             <Navbar />
           </header>
 
-          <main className="flex-1 pt-16 pb-24 relative z-10">
+          <main className="flex-1 pt-16 pb-20 relative z-10">
             <PageTransition>{children}</PageTransition>
           </main>
 
-          {/* Footer */}
-          <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20">
+          {/* Footer - add bottom padding to account for player */}
+          <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20 mb-20">
             <Footer />
           </footer>
 

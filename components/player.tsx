@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePlayer } from "@/context/player-context";
 import WaveSurfer from "wavesurfer.js";
 import {
@@ -55,6 +56,13 @@ export function Player() {
   const [currentTime, setCurrentTime] = useState(0);
   const [showQueue, setShowQueue] = useState(false);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  const [audioManagerReady, setAudioManagerReady] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure component is mounted before rendering (for portal)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Initialize AudioManager and WaveSurfer
   useEffect(() => {
@@ -82,6 +90,9 @@ export function Player() {
       try {
         await audioManager.initialize(currentTrack.audioUrl);
         if (!isMounted) return;
+
+        // Mark AudioManager as ready
+        setAudioManagerReady(true);
 
         // Set analyser for visualizer
         const analyserNode = audioManager.getAnalyser();
@@ -153,8 +164,9 @@ export function Player() {
             // Ignore
           }
 
-          if (isPlaying) {
-            audioManager.play();
+          // Auto-play if was playing before initialization
+          if (isPlaying && audioManager.getInitialized()) {
+            audioManager.play().catch(console.error);
           }
         });
 
@@ -180,6 +192,7 @@ export function Player() {
     return () => {
       isMounted = false;
       setAnalyser(null);
+      setAudioManagerReady(false);
       if (audioManagerRef.current) {
         audioManagerRef.current.cleanup();
         audioManagerRef.current = null;
@@ -194,22 +207,37 @@ export function Player() {
 
   // Handle Play/Pause with AudioManager
   useEffect(() => {
-    if (!audioManagerRef.current) return;
+    // Wait for AudioManager to be ready before handling play/pause
+    if (!audioManagerRef.current || !audioManagerReady) return;
     
-    if (isPlaying) {
-      audioManagerRef.current.play().catch(console.error);
-      // Sync WaveSurfer visualization
-      if (wavesurfer.current) {
-        const currentTime = audioManagerRef.current.getCurrentTime();
-        const duration = audioManagerRef.current.getDuration();
-        if (duration > 0) {
-          wavesurfer.current.seekTo(currentTime / duration);
+    const handlePlayPause = async () => {
+      if (isPlaying) {
+        try {
+          // Double-check AudioManager is initialized
+          if (!audioManagerRef.current || !audioManagerRef.current.getInitialized()) {
+            return;
+          }
+          await audioManagerRef.current.play();
+          // Sync WaveSurfer visualization
+          if (wavesurfer.current) {
+            const currentTime = audioManagerRef.current.getCurrentTime();
+            const duration = audioManagerRef.current.getDuration();
+            if (duration > 0) {
+              wavesurfer.current.seekTo(currentTime / duration);
+            }
+          }
+        } catch (error) {
+          console.error('❌ Failed to play audio:', error);
+        }
+      } else {
+        if (audioManagerRef.current && audioManagerRef.current.getInitialized()) {
+          audioManagerRef.current.pause();
         }
       }
-    } else {
-      audioManagerRef.current.pause();
-    }
-  }, [isPlaying]);
+    };
+
+    handlePlayPause();
+  }, [isPlaying, audioManagerReady]);
 
   // Handle Volume with AudioManager
   useEffect(() => {
@@ -336,20 +364,27 @@ export function Player() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  return (
-    <>
-      {/* Audio Visualizer - Background Effects */}
-      <BeatReactiveBackground
-        analyser={analyser}
-        isPlaying={isPlaying && !!currentTrack}
-      />
-      <AudioVisualizer
-        analyser={analyser}
-        isPlaying={isPlaying && !!currentTrack}
-      />
-
-      {/* Desktop / Persistent Player */}
-      <div className="fixed bottom-0 left-0 right-0 h-20 bg-background/80 backdrop-blur-xl border-t border-border/10 z-50 flex items-center px-4 gap-4">
+  // Player UI component - floating at bottom of viewport
+  const playerUI = (
+    <div 
+      data-player="true"
+      className="bg-background/80 backdrop-blur-xl border-t border-border/10 flex items-center px-4 gap-4 shadow-lg"
+      style={{ 
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        width: '100%',
+        maxWidth: '100vw',
+        height: '80px',
+        margin: 0,
+        padding: '0 1rem',
+        boxSizing: 'border-box',
+        zIndex: 99999,
+        transform: 'translateZ(0)', // Force hardware acceleration
+        isolation: 'isolate' // Create new stacking context
+      }}
+    >
         {/* Track Info */}
         <div className="flex items-center gap-3 w-1/4 min-w-[200px]">
           <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted">
@@ -542,6 +577,25 @@ export function Player() {
           </Drawer>
         </div>
       </div>
+  );
+
+  return (
+    <>
+      {/* Audio Visualizer - Background Effects */}
+      <BeatReactiveBackground
+        analyser={analyser}
+        isPlaying={isPlaying && !!currentTrack}
+      />
+      <AudioVisualizer
+        analyser={analyser}
+        isPlaying={isPlaying && !!currentTrack}
+      />
+
+      {/* Render player via portal to document.body to ensure fixed positioning works */}
+      {mounted && typeof window !== 'undefined' && createPortal(
+        playerUI,
+        document.body
+      )}
 
       {/* Desktop Queue Sidebar */}
       {showQueue && playlist.length > 0 && (
