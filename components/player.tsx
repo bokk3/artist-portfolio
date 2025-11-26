@@ -19,6 +19,9 @@ import {
   Maximize2,
   ChevronDown,
   ListMusic,
+  Shuffle,
+  Repeat,
+  Repeat1,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -35,7 +38,10 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
 import { QueueInterface } from "@/components/queue-interface";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AudioVisualizer, BeatReactiveBackground } from "@/components/audio-visualizer";
+import {
+  AudioVisualizer,
+  BeatReactiveBackground,
+} from "@/components/audio-visualizer";
 import { AudioManager } from "@/lib/audio-manager";
 
 export function Player() {
@@ -48,10 +54,27 @@ export function Player() {
     playNext,
     playPrev,
     playlist,
+    shuffle,
+    repeat,
+    toggleShuffle,
+    toggleRepeat,
+    playTrack,
   } = usePlayer();
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const audioManagerRef = useRef<AudioManager | null>(null);
+
+  // Refs for state that shouldn't trigger re-initialization
+  const repeatRef = useRef(repeat);
+  const playNextRef = useRef(playNext);
+  const playTrackRef = useRef(playTrack);
+
+  // Update refs when state changes
+  useEffect(() => {
+    repeatRef.current = repeat;
+    playNextRef.current = playNext;
+    playTrackRef.current = playTrack;
+  }, [repeat, playNext, playTrack]);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [showQueue, setShowQueue] = useState(false);
@@ -95,15 +118,25 @@ export function Player() {
           setAnalyser(analyserNode);
         }
 
-        // Handle audio finish event
+        // Handle audio finish event - respect repeat mode
+        // Handle audio finish event - respect repeat mode
         audioManager.addEventListener("ended", () => {
-          playNext();
+          const currentRepeat = repeatRef.current;
+
+          if (currentRepeat === "one") {
+            // Repeat current track
+            if (currentTrack) {
+              playTrackRef.current(currentTrack);
+            }
+          } else {
+            playNextRef.current();
+          }
         });
 
         // Step 2: Initialize WaveSurfer for waveform visualization only
         // WaveSurfer will create its own audio element (muted) for waveform sync
         if (!waveformRef.current) return;
-        
+
         if (wavesurfer.current) {
           wavesurfer.current.pause();
           wavesurfer.current.destroy();
@@ -148,7 +181,7 @@ export function Player() {
           const wsDuration = wavesurfer.current?.getDuration() || 0;
           const amDuration = audioManager.getDuration();
           setDuration(amDuration || wsDuration);
-          
+
           // Mute WaveSurfer's audio element (we use AudioManager for playback)
           try {
             const wsAudio = wavesurfer.current?.getMediaElement();
@@ -166,12 +199,11 @@ export function Player() {
         });
 
         // Handle waveform interaction (click/drag to seek)
-        wavesurfer.current.on("interaction", (progress: number) => {
+        // Handle waveform interaction (click/drag to seek)
+        // WaveSurfer v7 passes the new time in seconds directly
+        wavesurfer.current.on("interaction", (newTime: number) => {
           if (!audioManager) return;
-          const duration = audioManager.getDuration();
-          if (duration > 0) {
-            audioManager.seekTo(progress * duration);
-          }
+          audioManager.seekTo(newTime);
         });
 
         return () => {
@@ -198,18 +230,21 @@ export function Player() {
         wavesurfer.current = null;
       }
     };
-  }, [currentTrack, playNext]);
+  }, [currentTrack]); // Only re-initialize when track changes
 
   // Handle Play/Pause with AudioManager
   useEffect(() => {
     // Wait for AudioManager to be ready before handling play/pause
     if (!audioManagerRef.current || !audioManagerReady) return;
-    
+
     const handlePlayPause = async () => {
       if (isPlaying) {
         try {
           // Double-check AudioManager is initialized
-          if (!audioManagerRef.current || !audioManagerRef.current.getInitialized()) {
+          if (
+            !audioManagerRef.current ||
+            !audioManagerRef.current.getInitialized()
+          ) {
             return;
           }
           await audioManagerRef.current.play();
@@ -222,10 +257,13 @@ export function Player() {
             }
           }
         } catch (error) {
-          console.error('❌ Failed to play audio:', error);
+          console.error("❌ Failed to play audio:", error);
         }
       } else {
-        if (audioManagerRef.current && audioManagerRef.current.getInitialized()) {
+        if (
+          audioManagerRef.current &&
+          audioManagerRef.current.getInitialized()
+        ) {
           audioManagerRef.current.pause();
         }
       }
@@ -300,7 +338,11 @@ export function Player() {
       mediaSession.setActionHandler("seekbackward", (details: any) => {
         console.log("Media Session: Seek backward", details);
         if (audioManagerRef.current && details) {
-          const newTime = Math.max(0, audioManagerRef.current.getCurrentTime() - (details.seekOffset || 10));
+          const newTime = Math.max(
+            0,
+            audioManagerRef.current.getCurrentTime() -
+              (details.seekOffset || 10)
+          );
           audioManagerRef.current.seekTo(newTime);
           if (wavesurfer.current && duration > 0) {
             wavesurfer.current.seekTo(newTime / duration);
@@ -312,7 +354,11 @@ export function Player() {
       mediaSession.setActionHandler("seekforward", (details: any) => {
         console.log("Media Session: Seek forward", details);
         if (audioManagerRef.current && details) {
-          const newTime = Math.min(duration, audioManagerRef.current.getCurrentTime() + (details.seekOffset || 10));
+          const newTime = Math.min(
+            duration,
+            audioManagerRef.current.getCurrentTime() +
+              (details.seekOffset || 10)
+          );
           audioManagerRef.current.seekTo(newTime);
           if (wavesurfer.current && duration > 0) {
             wavesurfer.current.seekTo(newTime / duration);
@@ -326,7 +372,12 @@ export function Player() {
 
     // Update position state (for lock screen progress)
     const updatePositionState = () => {
-      if (audioManagerRef.current && duration > 0 && isFinite(duration) && isFinite(currentTime)) {
+      if (
+        audioManagerRef.current &&
+        duration > 0 &&
+        isFinite(duration) &&
+        isFinite(currentTime)
+      ) {
         // Ensure currentTime is within valid bounds
         const validCurrentTime = Math.max(0, Math.min(currentTime, duration));
         updateMediaSessionPosition(duration, validCurrentTime);
@@ -349,7 +400,15 @@ export function Player() {
         mediaSession.setActionHandler("seekforward", null);
       }
     };
-  }, [currentTrack, isPlaying, currentTime, duration, togglePlay, playNext, playPrev]);
+  }, [
+    currentTrack,
+    isPlaying,
+    currentTime,
+    duration,
+    togglePlay,
+    playNext,
+    playPrev,
+  ]);
 
   // Mount check - component only renders on client
   useEffect(() => {
@@ -365,240 +424,327 @@ export function Player() {
   // Player UI component - floating at bottom of viewport
   // Only render if we have a currentTrack
   const playerUI = currentTrack ? (
-    <div 
+    <div
       data-player="true"
       className="bg-background/80 backdrop-blur-xl border-t border-border/10 flex items-center px-4 gap-4 shadow-lg"
-      style={{ 
-        position: 'fixed' as const,
-        bottom: '0px',
-        left: '0px',
-        right: '0px',
-        width: '100%',
-        maxWidth: '100vw',
-        height: '80px',
-        margin: '0',
-        padding: '0 1rem',
-        boxSizing: 'border-box' as const,
-        zIndex: 99999,
-        transform: 'translateZ(0)',
-        isolation: 'isolate' as const,
-        // Force these to override any parent styles
-        top: 'auto',
-        display: 'flex',
-      }}
+      style={
+        {
+          position: "fixed",
+          bottom: "0",
+          left: "0",
+          right: "0",
+          width: "100%",
+          maxWidth: "100vw",
+          height: "80px",
+          margin: "0",
+          padding: "0 1rem",
+          boxSizing: "border-box",
+          zIndex: "99999",
+          transform: "translateZ(0)",
+          isolation: "isolate",
+          top: "auto",
+          display: "flex",
+        } as React.CSSProperties
+      }
     >
-        {/* Track Info */}
-        <div className="flex items-center gap-3 w-1/4 min-w-[200px]">
-          <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted">
-            {currentTrack.coverImageUrl && (
-              <Image
-                src={currentTrack.coverImageUrl}
-                alt={currentTrack.title}
-                fill
-                className="object-cover"
-              />
-            )}
-          </div>
-          <div className="overflow-hidden">
-            <h4 className="text-sm font-bold truncate">{currentTrack.title}</h4>
-            <p className="text-xs text-muted-foreground truncate">
-              {currentTrack.artist}
-            </p>
-          </div>
-        </div>
-
-        {/* Controls & Waveform */}
-        <div className="flex-1 flex flex-col items-center justify-center gap-1">
-          <div className="flex items-center gap-4 md:gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={playPrev}
-              className="h-12 w-12 md:h-8 md:w-8 text-muted-foreground hover:text-primary touch-manipulation"
-            >
-              <SkipBack className="h-6 w-6 md:h-4 md:w-4" />
-            </Button>
-            <Button
-              size="icon"
-              onClick={togglePlay}
-              className="h-14 w-14 md:h-10 md:w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(255,16,240,0.5)] touch-manipulation"
-            >
-              {isPlaying ? (
-                <Pause className="h-7 w-7 md:h-5 md:w-5" />
-              ) : (
-                <Play className="h-7 w-7 md:h-5 md:w-5 ml-1" />
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={playNext}
-              className="h-12 w-12 md:h-8 md:w-8 text-muted-foreground hover:text-primary touch-manipulation"
-            >
-              <SkipForward className="h-6 w-6 md:h-4 md:w-4" />
-            </Button>
-          </div>
-          <div className="w-full flex items-center gap-2 text-xs text-muted-foreground font-mono">
-            <span>{formatTime(currentTime)}</span>
-            <div
-              ref={waveformRef}
-              className="flex-1 h-10 cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
+      {/* Track Info */}
+      <div className="flex items-center gap-3 w-1/4 min-w-[200px]">
+        <div className="h-12 w-12 relative rounded-md overflow-hidden bg-muted">
+          {currentTrack.coverImageUrl && (
+            <Image
+              src={currentTrack.coverImageUrl}
+              alt={currentTrack.title}
+              fill
+              className="object-cover"
             />
-            <span>{formatTime(duration)}</span>
-          </div>
-        </div>
-
-        {/* Volume & Queue & Mobile Expand */}
-        <div className="w-1/4 flex items-center justify-end gap-4">
-          <div className="hidden md:flex items-center gap-2 w-32">
-            <Volume2 className="h-4 w-4 text-muted-foreground" />
-            <Slider
-              value={[volume]}
-              max={1}
-              step={0.01}
-              onValueChange={(val: number[]) => setVolume(val[0])}
-              className="cursor-pointer"
-            />
-          </div>
-
-          {/* Desktop Queue Button */}
-          {playlist.length > 0 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowQueue(!showQueue)}
-              className="hidden md:flex relative"
-            >
-              <ListMusic className="h-5 w-5" />
-              {playlist.length > 1 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
-                  {playlist.length}
-                </span>
-              )}
-            </Button>
           )}
-
-          {/* Mobile Drawer Trigger */}
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Maximize2 className="h-5 w-5" />
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent className="h-[90vh] bg-background/95 backdrop-blur-xl border-t border-border/10">
-              <DrawerHeader className="text-left">
-                <DrawerTitle className="sr-only">Now Playing</DrawerTitle>
-                <div className="flex justify-center mb-4">
-                  <div className="w-12 h-1 bg-muted rounded-full" />
-                </div>
-              </DrawerHeader>
-              <Tabs defaultValue="now-playing" className="flex-1 flex flex-col h-full">
-                <TabsList className="mx-4 mb-2">
-                  <TabsTrigger value="now-playing">Now Playing</TabsTrigger>
-                  <TabsTrigger value="queue" className="relative">
-                    Queue
-                    {playlist.length > 1 && (
-                      <span className="ml-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
-                        {playlist.length}
-                      </span>
-                    )}
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="now-playing" className="flex-1 overflow-hidden">
-                  <div className="p-6 flex flex-col h-full overflow-y-auto">
-                    <div className="w-full aspect-square relative rounded-xl overflow-hidden shadow-2xl mb-8 bg-muted">
-                      {currentTrack.coverImageUrl && (
-                        <Image
-                          src={currentTrack.coverImageUrl}
-                          alt={currentTrack.title}
-                          fill
-                          className="object-cover"
-                        />
-                      )}
-                    </div>
-
-                    <div className="mb-8">
-                      <h2 className="text-3xl font-display font-bold mb-2">
-                        {currentTrack.title}
-                      </h2>
-                      <p className="text-xl text-muted-foreground">
-                        {currentTrack.artist}
-                      </p>
-                    </div>
-
-                    {/* Mobile Waveform Placeholder */}
-                    <div className="w-full h-1 bg-muted rounded-full mb-2 relative">
-                      <div
-                        className="absolute top-0 left-0 h-full bg-primary rounded-full"
-                        style={{ width: `${(currentTime / duration) * 100}%` }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-sm text-muted-foreground font-mono mb-8">
-                      <span>{formatTime(currentTime)}</span>
-                      <span>{formatTime(duration)}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between mb-8">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={playPrev}
-                        className="h-12 w-12"
-                      >
-                        <SkipBack className="h-8 w-8" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        onClick={togglePlay}
-                        className="h-20 w-20 rounded-full bg-primary text-primary-foreground shadow-[0_0_30px_rgba(255,16,240,0.4)]"
-                      >
-                        {isPlaying ? (
-                          <Pause className="h-10 w-10" />
-                        ) : (
-                          <Play className="h-10 w-10 ml-1" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={playNext}
-                        className="h-12 w-12"
-                      >
-                        <SkipForward className="h-8 w-8" />
-                      </Button>
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="queue" className="flex-1 overflow-hidden">
-                  <div className="h-full">
-                    <QueueInterface />
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </DrawerContent>
-          </Drawer>
+        </div>
+        <div className="overflow-hidden">
+          <h4 className="text-sm font-bold truncate">{currentTrack.title}</h4>
+          <p className="text-xs text-muted-foreground truncate">
+            {currentTrack.artist}
+          </p>
         </div>
       </div>
+
+      {/* Controls & Waveform */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-1">
+        <div className="flex items-center gap-2 md:gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleShuffle}
+            className={`h-10 w-10 md:h-8 md:w-8 touch-manipulation ${
+              shuffle
+                ? "text-primary"
+                : "text-muted-foreground hover:text-primary"
+            }`}
+          >
+            <Shuffle className="h-5 w-5 md:h-4 md:w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={playPrev}
+            className="h-12 w-12 md:h-8 md:w-8 text-muted-foreground hover:text-primary touch-manipulation"
+          >
+            <SkipBack className="h-6 w-6 md:h-4 md:w-4" />
+          </Button>
+          <Button
+            size="icon"
+            onClick={togglePlay}
+            className="h-14 w-14 md:h-10 md:w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(255,16,240,0.5)] touch-manipulation"
+          >
+            {isPlaying ? (
+              <Pause className="h-7 w-7 md:h-5 md:w-5" />
+            ) : (
+              <Play className="h-7 w-7 md:h-5 md:w-5 ml-1" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={playNext}
+            className="h-12 w-12 md:h-8 md:w-8 text-muted-foreground hover:text-primary touch-manipulation"
+          >
+            <SkipForward className="h-6 w-6 md:h-4 md:w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleRepeat}
+            className={`h-10 w-10 md:h-8 md:w-8 touch-manipulation ${
+              repeat !== "off"
+                ? "text-primary"
+                : "text-muted-foreground hover:text-primary"
+            }`}
+          >
+            {repeat === "one" ? (
+              <Repeat1 className="h-5 w-5 md:h-4 md:w-4" />
+            ) : (
+              <Repeat className="h-5 w-5 md:h-4 md:w-4" />
+            )}
+          </Button>
+        </div>
+        <div className="w-full flex items-center gap-2 text-xs text-muted-foreground font-mono">
+          <span>{formatTime(currentTime)}</span>
+          <div
+            ref={waveformRef}
+            className="flex-1 h-10 cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
+          />
+          <span>{formatTime(duration)}</span>
+        </div>
+      </div>
+
+      {/* Volume & Queue & Mobile Expand */}
+      <div className="w-1/4 flex items-center justify-end gap-4">
+        <div className="hidden md:flex items-center gap-2 w-32">
+          <Volume2 className="h-4 w-4 text-muted-foreground" />
+          <Slider
+            value={[volume]}
+            max={1}
+            step={0.01}
+            onValueChange={(val: number[]) => setVolume(val[0])}
+            className="cursor-pointer"
+          />
+        </div>
+
+        {/* Desktop Queue Button */}
+        {playlist.length > 0 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowQueue(!showQueue)}
+            className="hidden md:flex relative"
+          >
+            <ListMusic className="h-5 w-5" />
+            {playlist.length > 1 && (
+              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
+                {playlist.length}
+              </span>
+            )}
+          </Button>
+        )}
+
+        {/* Mobile Drawer Trigger */}
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <Maximize2 className="h-5 w-5" />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent className="h-[90vh] bg-background/95 backdrop-blur-xl border-t border-border/10">
+            <DrawerHeader className="text-left">
+              <DrawerTitle className="sr-only">Now Playing</DrawerTitle>
+              <div className="flex justify-center mb-4">
+                <div className="w-12 h-1 bg-muted rounded-full" />
+              </div>
+            </DrawerHeader>
+            <Tabs
+              defaultValue="now-playing"
+              className="flex-1 flex flex-col h-full"
+            >
+              <TabsList className="mx-4 mb-2">
+                <TabsTrigger value="now-playing">Now Playing</TabsTrigger>
+                <TabsTrigger value="queue" className="relative">
+                  Queue
+                  {playlist.length > 1 && (
+                    <span className="ml-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
+                      {playlist.length}
+                    </span>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent
+                value="now-playing"
+                className="flex-1 overflow-hidden"
+              >
+                <div className="p-6 flex flex-col h-full overflow-y-auto">
+                  <div className="w-full aspect-square relative rounded-xl overflow-hidden shadow-2xl mb-8 bg-muted">
+                    {currentTrack.coverImageUrl && (
+                      <Image
+                        src={currentTrack.coverImageUrl}
+                        alt={currentTrack.title}
+                        fill
+                        className="object-cover"
+                      />
+                    )}
+                  </div>
+
+                  <div className="mb-8">
+                    <h2 className="text-3xl font-display font-bold mb-2">
+                      {currentTrack.title}
+                    </h2>
+                    <p className="text-xl text-muted-foreground">
+                      {currentTrack.artist}
+                    </p>
+                  </div>
+
+                  {/* Mobile Waveform Placeholder */}
+                  <div className="w-full h-1 bg-muted rounded-full mb-2 relative">
+                    <div
+                      className="absolute top-0 left-0 h-full bg-primary rounded-full"
+                      style={{ width: `${(currentTime / duration) * 100}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-sm text-muted-foreground font-mono mb-8">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between mb-8">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={toggleShuffle}
+                      className={`h-12 w-12 ${
+                        shuffle ? "text-primary" : "text-muted-foreground"
+                      }`}
+                    >
+                      <Shuffle className="h-6 w-6" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={playPrev}
+                      className="h-12 w-12"
+                    >
+                      <SkipBack className="h-8 w-8" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      onClick={togglePlay}
+                      className="h-20 w-20 rounded-full bg-primary text-primary-foreground shadow-[0_0_30px_rgba(255,16,240,0.4)]"
+                    >
+                      {isPlaying ? (
+                        <Pause className="h-10 w-10" />
+                      ) : (
+                        <Play className="h-10 w-10 ml-1" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={playNext}
+                      className="h-12 w-12"
+                    >
+                      <SkipForward className="h-8 w-8" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={toggleRepeat}
+                      className={`h-12 w-12 ${
+                        repeat !== "off"
+                          ? "text-primary"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {repeat === "one" ? (
+                        <Repeat1 className="h-6 w-6" />
+                      ) : (
+                        <Repeat className="h-6 w-6" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent value="queue" className="flex-1 overflow-hidden">
+                <div className="h-full">
+                  <QueueInterface />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </DrawerContent>
+        </Drawer>
+      </div>
+    </div>
   ) : null;
 
-  // Force player element to be fixed after render
+  // Force player element to ALWAYS be fixed at bottom of viewport
   useEffect(() => {
-    if (!isMounted || typeof window === 'undefined') return;
-    
-    // Find the player element anywhere in the document and ensure it's fixed
-    const playerElement = document.querySelector('[data-player="true"]') as HTMLElement;
-    if (playerElement) {
-      // Force styles directly on the element with !important
-      playerElement.style.cssText += 'position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important;';
-    }
+    if (!isMounted || typeof window === "undefined") return;
+
+    const enforceFixedPosition = () => {
+      const playerElement = document.querySelector(
+        '[data-player="true"]'
+      ) as HTMLElement;
+      if (playerElement) {
+        // Force positioning without overwriting other styles
+        playerElement.style.setProperty("position", "fixed", "important");
+        playerElement.style.setProperty("bottom", "0", "important");
+        playerElement.style.setProperty("left", "0", "important");
+        playerElement.style.setProperty("right", "0", "important");
+        playerElement.style.setProperty("z-index", "99999", "important");
+        playerElement.style.setProperty("top", "auto", "important");
+      }
+    };
+
+    // Set immediately
+    enforceFixedPosition();
+
+    // Re-check periodically to ensure it stays fixed
+    const interval = setInterval(enforceFixedPosition, 100);
+
+    // Also check on scroll/resize
+    window.addEventListener("scroll", enforceFixedPosition, { passive: true });
+    window.addEventListener("resize", enforceFixedPosition);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("scroll", enforceFixedPosition);
+      window.removeEventListener("resize", enforceFixedPosition);
+    };
   }, [isMounted, currentTrack]);
 
   // ALWAYS return null in normal render - component never appears in layout tree
-  if (!isMounted || typeof window === 'undefined' || !document.body) {
+  // Portal content is rendered separately via useEffect after mount
+  if (!isMounted || typeof window === "undefined" || !document.body) {
     return null;
   }
 
-  // Render portal content DIRECTLY to document.body - no container
+  // Always render portal (even when empty) - this ensures nothing renders in normal flow
+  // playerUI is conditional inside the portal
   return createPortal(
     <>
       {/* Audio Visualizer - Background Effects */}

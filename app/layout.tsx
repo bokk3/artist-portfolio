@@ -18,7 +18,10 @@ const outfit = Outfit({
 // For this implementation, we will assume Clash Display is loaded via CSS or we can use a similar Google Font like 'Syne' as a temporary fallback if needed,
 // but the rules say "Clash Display". We will add a class for it.
 
-const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://artist-portfolio.com";
+const siteUrl =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://artist-portfolio.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -86,24 +89,26 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body
         className={`${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col`}
-        style={{ overflowX: 'hidden' }}
+        style={{ overflowX: "hidden" }}
       >
         <PlayerProvider>
           {/* Audio Visualizer Background - rendered in Player component */}
-          
-          {/* Navbar */}
-          <header className="fixed top-0 w-full z-50 border-b border-border/10 bg-background/80 backdrop-blur-md">
-            <Navbar />
-          </header>
 
-          <main className="flex-1 pt-16 pb-20 relative z-10">
-            <PageTransition>{children}</PageTransition>
-          </main>
+          <div id="app-content" className="flex flex-col min-h-screen">
+            {/* Navbar */}
+            <header className="fixed top-0 w-full z-50 border-b border-border/10 bg-background/80 backdrop-blur-md">
+              <Navbar />
+            </header>
 
-          {/* Footer - add bottom padding to account for player */}
-          <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20 mb-20">
-            <Footer />
-          </footer>
+            <main className="flex-1 pt-16 pb-20 relative z-10">
+              <PageTransition>{children}</PageTransition>
+            </main>
+
+            {/* Footer - add bottom padding to account for player */}
+            <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20 mb-20">
+              <Footer />
+            </footer>
+          </div>
 
           {/* Persistent Player */}
           <Player />

@@ -17,17 +17,24 @@ type Track = {
   waveformData?: string; // JSON string
 };
 
+export type RepeatMode = 'off' | 'all' | 'one';
+
 type PlayerContextType = {
   currentTrack: Track | null;
   isPlaying: boolean;
   volume: number;
+  shuffle: boolean;
+  repeat: RepeatMode;
   playTrack: (track: Track) => void;
   togglePlay: () => void;
   setVolume: (volume: number) => void;
+  toggleShuffle: () => void;
+  toggleRepeat: () => void;
   playNext: () => void;
   playPrev: () => void;
   playlist: Track[];
   setPlaylist: (tracks: Track[]) => void;
+  addToQueue: (tracks: Track[]) => void;
   removeTrack: (trackId: number) => void;
   reorderTracks: (fromIndex: number, toIndex: number) => void;
   clearQueue: () => void;
@@ -41,6 +48,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);
   const [playlist, setPlaylist] = useState<Track[]>([]);
+  const [shuffle, setShuffle] = useState(false);
+  const [repeat, setRepeat] = useState<RepeatMode>('off');
+  const [shuffledPlaylist, setShuffledPlaylist] = useState<Track[]>([]);
 
   const stop = () => {
     setIsPlaying(false);
@@ -60,19 +70,85 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     setIsPlaying((prev) => !prev);
   };
 
+  const toggleShuffle = () => {
+    setShuffle((prev) => {
+      if (!prev) {
+        // Enable shuffle - create shuffled copy
+        const shuffled = [...playlist].sort(() => Math.random() - 0.5);
+        setShuffledPlaylist(shuffled);
+      } else {
+        // Disable shuffle - clear shuffled list
+        setShuffledPlaylist([]);
+      }
+      return !prev;
+    });
+  };
+
+  const toggleRepeat = () => {
+    setRepeat((prev) => {
+      if (prev === 'off') return 'all';
+      if (prev === 'all') return 'one';
+      return 'off';
+    });
+  };
+
   const playNext = () => {
     if (!currentTrack || playlist.length === 0) return;
-    const currentIndex = playlist.findIndex((t) => t.id === currentTrack.id);
-    const nextIndex = (currentIndex + 1) % playlist.length;
-    playTrack(playlist[nextIndex]);
+    
+    const activePlaylist = shuffle && shuffledPlaylist.length > 0 ? shuffledPlaylist : playlist;
+    const currentIndex = activePlaylist.findIndex((t) => t.id === currentTrack.id);
+    
+    if (repeat === 'one') {
+      // Repeat current track
+      playTrack(currentTrack);
+      return;
+    }
+    
+    if (currentIndex === -1 || currentIndex === activePlaylist.length - 1) {
+      // End of playlist
+      if (repeat === 'all') {
+        // Loop back to start
+        playTrack(activePlaylist[0]);
+      }
+      return;
+    }
+    
+    const nextIndex = currentIndex + 1;
+    playTrack(activePlaylist[nextIndex]);
   };
 
   const playPrev = () => {
     if (!currentTrack || playlist.length === 0) return;
-    const currentIndex = playlist.findIndex((t) => t.id === currentTrack.id);
-    const prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-    playTrack(playlist[prevIndex]);
+    
+    const activePlaylist = shuffle && shuffledPlaylist.length > 0 ? shuffledPlaylist : playlist;
+    const currentIndex = activePlaylist.findIndex((t) => t.id === currentTrack.id);
+    
+    if (repeat === 'one') {
+      // Repeat current track
+      playTrack(currentTrack);
+      return;
+    }
+    
+    if (currentIndex <= 0) {
+      // Start of playlist
+      if (repeat === 'all') {
+        // Loop to end
+        playTrack(activePlaylist[activePlaylist.length - 1]);
+      }
+      return;
+    }
+    
+    const prevIndex = currentIndex - 1;
+    playTrack(activePlaylist[prevIndex]);
   };
+
+  // Update shuffled playlist when playlist changes
+  useEffect(() => {
+    if (shuffle && playlist.length > 0) {
+      const shuffled = [...playlist].sort(() => Math.random() - 0.5);
+      setShuffledPlaylist(shuffled);
+    }
+  }, [playlist, shuffle]);
 
   const removeTrack = (trackId: number) => {
     // Don't remove the currently playing track
@@ -86,6 +162,14 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const [removed] = newPlaylist.splice(fromIndex, 1);
     newPlaylist.splice(toIndex, 0, removed);
     setPlaylist(newPlaylist);
+  };
+
+  const addToQueue = (tracksToAdd: Track[]) => {
+    setPlaylist((prev) => {
+      const existingIds = new Set(prev.map((t) => t.id));
+      const newTracks = tracksToAdd.filter((t) => !existingIds.has(t.id));
+      return [...prev, ...newTracks];
+    });
   };
 
   const clearQueue = () => {
@@ -103,13 +187,18 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         currentTrack,
         isPlaying,
         volume,
+        shuffle,
+        repeat,
         playTrack,
         togglePlay,
         setVolume,
+        toggleShuffle,
+        toggleRepeat,
         playNext,
         playPrev,
         playlist,
         setPlaylist,
+        addToQueue,
         removeTrack,
         reorderTracks,
         clearQueue,
