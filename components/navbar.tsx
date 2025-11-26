@@ -88,19 +88,19 @@ export function Navbar() {
       </div>
 
       {/* Mobile Nav */}
-      <div className="md:hidden flex items-center gap-2">
+      <div className="md:hidden flex items-center gap-3">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setOpen(true)}
-          className="text-muted-foreground"
+          className="text-muted-foreground h-12 w-12 touch-manipulation"
         >
-          <Search className="h-5 w-5" />
+          <Search className="h-6 w-6" />
         </Button>
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="h-12 w-12 touch-manipulation">
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
@@ -108,19 +108,19 @@ export function Navbar() {
             side="right"
             className="bg-background/95 backdrop-blur-xl border-l border-border/10"
           >
-            <div className="flex flex-col gap-6 mt-10">
+            <div className="flex flex-col gap-4 mt-10">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-2xl font-display font-medium transition-colors hover:text-primary flex items-center gap-3",
+                    "text-2xl font-display font-medium transition-colors hover:text-primary active:text-primary flex items-center gap-4 py-4 px-2 -mx-2 rounded-lg active:bg-muted/50 touch-manipulation",
                     pathname === item.href
                       ? "text-primary"
                       : "text-muted-foreground"
                   )}
                 >
-                  <item.icon className="h-6 w-6" />
+                  <item.icon className="h-7 w-7" />
                   {item.name}
                 </Link>
               ))}

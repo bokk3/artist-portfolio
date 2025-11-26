@@ -225,33 +225,33 @@ export function Player() {
 
         {/* Controls & Waveform */}
         <div className="flex-1 flex flex-col items-center justify-center gap-1">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 md:gap-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={playPrev}
-              className="h-8 w-8 text-muted-foreground hover:text-primary"
+              className="h-12 w-12 md:h-8 md:w-8 text-muted-foreground hover:text-primary touch-manipulation"
             >
-              <SkipBack className="h-4 w-4" />
+              <SkipBack className="h-6 w-6 md:h-4 md:w-4" />
             </Button>
             <Button
               size="icon"
               onClick={togglePlay}
-              className="h-10 w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(255,16,240,0.5)]"
+              className="h-14 w-14 md:h-10 md:w-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_0_15px_rgba(255,16,240,0.5)] touch-manipulation"
             >
               {isPlaying ? (
-                <Pause className="h-5 w-5" />
+                <Pause className="h-7 w-7 md:h-5 md:w-5" />
               ) : (
-                <Play className="h-5 w-5 ml-1" />
+                <Play className="h-7 w-7 md:h-5 md:w-5 ml-1" />
               )}
             </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={playNext}
-              className="h-8 w-8 text-muted-foreground hover:text-primary"
+              className="h-12 w-12 md:h-8 md:w-8 text-muted-foreground hover:text-primary touch-manipulation"
             >
-              <SkipForward className="h-4 w-4" />
+              <SkipForward className="h-6 w-6 md:h-4 md:w-4" />
             </Button>
           </div>
           <div className="w-full flex items-center gap-2 text-xs text-muted-foreground font-mono">

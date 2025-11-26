@@ -45,9 +45,10 @@ export function PlayAlbumButton({
   };
 
   return (
-    <Button onClick={handlePlay} className={className}>
-      <Play className="mr-2 h-4 w-4" /> Play Album
+    <Button onClick={handlePlay} className={`touch-manipulation min-h-[44px] ${className || ""}`}>
+      <Play className="mr-2 h-5 w-5 md:h-4 md:w-4" /> Play Album
     </Button>
   );
 }
+
 

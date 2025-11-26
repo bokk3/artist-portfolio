@@ -2,6 +2,37 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Mobile devices */
+  button,
+  a,
+  [role="button"],
+  [tabindex] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve tap targets */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 16, 240, 0.2);
+  }
+  
+  /* Better spacing for touch */
+  .gap-2 {
+    gap: 0.75rem;
+  }
+  
+  .gap-3 {
+    gap: 1rem;
+  }
+  
+  .gap-4 {
+    gap: 1.25rem;
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

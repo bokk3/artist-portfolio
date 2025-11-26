@@ -70,16 +70,22 @@ export default async function HomePage() {
         <SectionWrapper>
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="md:w-1/2">
-              <div className="aspect-square relative rounded-xl overflow-hidden shadow-2xl group">
-                {latestRelease.cover_image_url && (
-                  <Image
-                    src={latestRelease.cover_image_url}
-                    alt={latestRelease.title}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-105"
-                  />
-                )}
-              </div>
+              <Link href={`/music/${latestRelease.slug}`} className="block">
+                <div className="aspect-square relative rounded-xl overflow-hidden shadow-2xl group cursor-pointer">
+                  {latestRelease.cover_image_url && (
+                    <Image
+                      src={latestRelease.cover_image_url}
+                      alt={latestRelease.title}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                    />
+                  )}
+                  {/* Mobile touch indicator */}
+                  <div className="absolute inset-0 md:hidden flex items-center justify-center opacity-0 active:opacity-100 transition-opacity bg-black/20 pointer-events-none">
+                    <Music2 className="h-12 w-12 text-white" />
+                  </div>
+                </div>
+              </Link>
             </div>
             <div className="md:w-1/2 text-center md:text-left">
               <p className="text-sm uppercase tracking-widest text-primary font-bold mb-2">

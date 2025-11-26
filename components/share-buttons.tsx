@@ -116,18 +116,18 @@ export function ShareButtons({
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size={variant === "icon" ? "icon" : "sm"}>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+          <Button variant="outline" size={variant === "icon" ? "icon" : "sm"} className="touch-manipulation min-h-[44px] md:min-h-0">
             {buttonContent}
-          </Button>
-        </DropdownMenuTrigger>
+        </Button>
+      </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           {/* Native Share (Mobile) */}
           {typeof navigator !== "undefined" && typeof navigator.share === "function" && (
             <>
-              <DropdownMenuItem onClick={handleNativeShare} className="cursor-pointer">
-                <Share2 className="mr-2 h-4 w-4" />
+              <DropdownMenuItem onClick={handleNativeShare} className="cursor-pointer touch-manipulation min-h-[44px]">
+                <Share2 className="mr-2 h-5 w-5 md:h-4 md:w-4" />
                 Share via...
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -135,25 +135,25 @@ export function ShareButtons({
           )}
 
           {/* Social Platforms */}
-          <DropdownMenuItem asChild>
-            <a
-              href={shareLinks.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer"
-            >
-              <Twitter className="mr-2 h-4 w-4" />
+        <DropdownMenuItem asChild>
+          <a
+            href={shareLinks.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer"
+          >
+            <Twitter className="mr-2 h-4 w-4" />
               Twitter / X
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a
-              href={shareLinks.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer"
-            >
-              <Facebook className="mr-2 h-4 w-4" />
+          </a>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <a
+            href={shareLinks.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer"
+          >
+            <Facebook className="mr-2 h-4 w-4" />
               Facebook
             </a>
           </DropdownMenuItem>
@@ -188,34 +188,34 @@ export function ShareButtons({
             >
               <MessageSquare className="mr-2 h-4 w-4" />
               Reddit
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a
-              href={shareLinks.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer"
-            >
-              <Linkedin className="mr-2 h-4 w-4" />
+          </a>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <a
+            href={shareLinks.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer"
+          >
+            <Linkedin className="mr-2 h-4 w-4" />
               LinkedIn
-            </a>
-          </DropdownMenuItem>
+          </a>
+        </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 
           {/* Copy Link */}
           <DropdownMenuItem
             onClick={() => copyToClipboard(shareUrl, setCopied)}
-            className="cursor-pointer"
+            className="cursor-pointer touch-manipulation min-h-[44px]"
           >
-            {copied ? (
-              <Check className="mr-2 h-4 w-4" />
-            ) : (
-              <LinkIcon className="mr-2 h-4 w-4" />
-            )}
-            {copied ? "Copied!" : "Copy Link"}
-          </DropdownMenuItem>
+          {copied ? (
+            <Check className="mr-2 h-4 w-4" />
+          ) : (
+            <LinkIcon className="mr-2 h-4 w-4" />
+          )}
+          {copied ? "Copied!" : "Copy Link"}
+        </DropdownMenuItem>
 
           {/* Embed Code */}
           <Dialog open={embedDialogOpen} onOpenChange={setEmbedDialogOpen}>
@@ -265,8 +265,8 @@ export function ShareButtons({
               </div>
             </DialogContent>
           </Dialog>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenuContent>
+    </DropdownMenu>
     </>
   );
 }

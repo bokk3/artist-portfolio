@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const isImage = allowedTypes.image.includes(file.type);
     const isAudio = allowedTypes.audio.includes(file.type);
     const isVideo = allowedTypes.video.includes(file.type);
-    
+
     // Also check by file extension for audio files (browsers sometimes send wrong MIME types)
     const ext = path.extname(file.name).toLowerCase();
     const audioExtensions = [".mp3", ".wav", ".ogg", ".flac", ".aac", ".m4a"];

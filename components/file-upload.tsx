@@ -610,7 +610,7 @@ export function FileUpload({
               {type === "audio" ? (
                 <span className="text-4xl">🎵</span>
               ) : (
-                <Upload className="h-8 w-8 text-muted-foreground" />
+              <Upload className="h-8 w-8 text-muted-foreground" />
               )}
               <p className="text-sm font-medium">
                 {isDragActive

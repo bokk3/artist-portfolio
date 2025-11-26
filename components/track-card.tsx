@@ -44,10 +44,10 @@ export function TrackCard({ track, index }: { track: Track; index: number }) {
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Card className="group border-border/10 bg-card/50 hover:bg-card/80 transition-all hover:shadow-lg overflow-hidden">
-        <CardContent className="p-4 flex items-center gap-4">
+        <CardContent className="p-4 md:p-4 flex items-center gap-4">
           <motion.div
             whileHover={{ scale: 1.1, rotate: 5 }}
-            className="relative w-16 h-16 rounded-lg bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center flex-shrink-0"
+            className="relative w-16 h-16 md:w-16 md:h-16 rounded-lg bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center flex-shrink-0"
           >
             <Music className="h-8 w-8 text-primary" />
             <motion.div
@@ -56,7 +56,7 @@ export function TrackCard({ track, index }: { track: Track; index: number }) {
             />
           </motion.div>
 
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 cursor-pointer touch-manipulation" onClick={handlePlay}>
             <h3 className="font-bold truncate group-hover:text-primary transition-colors">
               {track.title}
             </h3>
@@ -74,10 +74,10 @@ export function TrackCard({ track, index }: { track: Track; index: number }) {
             <Button
               size="icon"
               variant="ghost"
-              className="rounded-full"
+              className="rounded-full h-12 w-12 md:h-9 md:w-9 touch-manipulation"
               onClick={handlePlay}
             >
-              <Play className="h-5 w-5 ml-0.5" />
+              <Play className="h-6 w-6 md:h-5 md:w-5 ml-0.5" />
             </Button>
           </motion.div>
         </CardContent>

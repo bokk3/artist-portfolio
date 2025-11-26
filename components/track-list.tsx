@@ -84,31 +84,35 @@ export function TrackList({
         {tracks.map((track) => (
           <TableRow
             key={track.id}
-            className="group hover:bg-muted/50 border-border/10 transition-colors"
+            className="group hover:bg-muted/50 active:bg-muted/70 border-border/10 transition-colors cursor-pointer touch-manipulation"
+            onClick={() => handlePlay(track)}
           >
-            <TableCell className="font-mono text-muted-foreground">
+            <TableCell className="font-mono text-muted-foreground py-4">
               {track.track_number}
             </TableCell>
-            <TableCell>
+            <TableCell className="py-4">
               <div className="font-medium">{track.title}</div>
               <div className="text-xs text-muted-foreground md:hidden">
                 {track.artist}
               </div>
             </TableCell>
-            <TableCell className="text-right font-mono text-muted-foreground">
+            <TableCell className="text-right font-mono text-muted-foreground py-4">
               {formatTime(track.duration)}
             </TableCell>
-            <TableCell>
+            <TableCell className="py-4">
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => handlePlay(track)}
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePlay(track);
+                }}
+                className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity h-12 w-12 md:h-9 md:w-9 touch-manipulation"
               >
                 {currentTrack?.id === track.id && isPlaying ? (
-                  <Pause className="h-4 w-4 text-primary" />
+                  <Pause className="h-6 w-6 md:h-4 md:w-4 text-primary" />
                 ) : (
-                  <Play className="h-4 w-4" />
+                  <Play className="h-6 w-6 md:h-4 md:w-4" />
                 )}
               </Button>
             </TableCell>

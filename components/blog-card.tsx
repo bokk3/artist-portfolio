@@ -39,8 +39,8 @@ export function BlogCard({ post, index = 0 }: { post: Post; index?: number }) {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Link href={`/blog/${post.slug}`}>
-        <Card className="overflow-hidden group border-border/10 bg-card/50 hover:bg-card/80 transition-all hover:shadow-lg">
+    <Link href={`/blog/${post.slug}`}>
+      <Card className="overflow-hidden group border-border/10 bg-card/50 hover:bg-card/80 transition-all hover:shadow-lg">
         {post.cover_image_url && (
           <div className="relative w-full h-48 overflow-hidden bg-muted">
             <Image

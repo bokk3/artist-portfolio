@@ -34,11 +34,11 @@ export default async function AdminMusicPage() {
               Import from SoundCloud
             </Button>
           </Link>
-          <Link href="/admin/music/new">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" /> Add Release
-            </Button>
-          </Link>
+        <Link href="/admin/music/new">
+          <Button>
+            <Plus className="mr-2 h-4 w-4" /> Add Release
+          </Button>
+        </Link>
         </div>
       </div>
 
