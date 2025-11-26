@@ -155,6 +155,25 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
   }
+
+  /* Enhanced button visibility */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:scale-105 transition-all;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground font-medium shadow-md hover:shadow-lg hover:scale-105 transition-all;
+  }
+
+  /* Interactive element highlights */
+  .interactive {
+    @apply cursor-pointer transition-all hover:scale-105 active:scale-95;
+  }
+
+  /* Focus states for better visibility */
+  .focus-ring {
+    @apply focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
 }
 
 @layer base {

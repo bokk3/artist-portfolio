@@ -177,6 +177,9 @@ export function Footer() {
               truyens.pro
             </a>
           </p>
+          <p className="mt-2 text-xs text-muted-foreground/60">
+            v{process.env.NEXT_PUBLIC_APP_VERSION || "dev"}
+          </p>
         </div>
       </div>
     </footer>

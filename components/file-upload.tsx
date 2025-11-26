@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { toast } from "sonner";
 import { generateWaveformPeaks } from "@/lib/waveform";
+import { motion } from "framer-motion";
 
 interface FileUploadProps {
   type: "cover" | "audio" | "gallery" | "blog" | "press" | "misc";
@@ -606,22 +607,29 @@ export function FileUpload({
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-3">
               {type === "audio" ? (
                 <span className="text-4xl">🎵</span>
               ) : (
-              <Upload className="h-8 w-8 text-muted-foreground" />
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Upload className="h-10 w-10 text-primary" />
+              </motion.div>
               )}
-              <p className="text-sm font-medium">
-                {isDragActive
-                  ? "Drop file here"
-                  : type === "audio"
-                  ? "Click to upload audio or drag and drop"
-                  : "Click to upload or drag and drop"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {type === "audio" ? "MP3, WAV, OGG, FLAC, AAC, M4A • " : ""}Max {Math.round(maxSize / 1024 / 1024)}MB
-              </p>
+              <div className="flex flex-col items-center gap-1">
+                <p className="text-base font-semibold text-foreground">
+                  {isDragActive
+                    ? "Drop file here"
+                    : type === "audio"
+                    ? "Click to upload audio or drag and drop"
+                    : "Click to upload or drag and drop"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {type === "audio" ? "MP3, WAV, OGG, FLAC, AAC, M4A • " : ""}Max {Math.round(maxSize / 1024 / 1024)}MB
+                </p>
+              </div>
             </div>
           )}
         </div>

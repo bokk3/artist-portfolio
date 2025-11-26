@@ -60,7 +60,7 @@ export default function AdminLayout({
           ))}
         </nav>
 
-        <div className="p-4 border-t border-border/10">
+        <div className="p-4 border-t border-border/10 space-y-2">
           <form action={logoutAction}>
             <Button
               variant="ghost"
@@ -70,6 +70,9 @@ export default function AdminLayout({
               Logout
             </Button>
           </form>
+          <div className="text-xs text-muted-foreground text-center pt-2 border-t border-border/10">
+            <p className="font-mono">v{process.env.NEXT_PUBLIC_APP_VERSION || "dev"}</p>
+          </div>
         </div>
       </aside>
 

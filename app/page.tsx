@@ -107,7 +107,7 @@ export default async function HomePage() {
                 </p>
               )}
               <Link href={`/music/${latestRelease.slug}`}>
-                <Button size="lg">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 hover:shadow-primary/50 font-semibold min-h-[48px]">
                   <Music2 className="mr-2 h-5 w-5" />
                   Play Album
                 </Button>
