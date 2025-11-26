@@ -238,6 +238,14 @@ Built with ❤️ in Belgium by [truyens.pro](https://truyens.pro)
 - Icons: [Lucide](https://lucide.dev/)
 - Audio: [WaveSurfer.js](https://wavesurfer.xyz/)
 
+## 📝 Changelog
+
+### v1.2.2
+
+- **Fixed**: Player positioning issue where it would render off-screen or overlap content.
+- **Fixed**: Player controls (Repeat/Shuffle) causing track restarts.
+- **Fixed**: Waveform interaction not seeking correctly.
+
 ---
 
 **Made with ❤️ for artists who want to showcase their work beautifully.**
