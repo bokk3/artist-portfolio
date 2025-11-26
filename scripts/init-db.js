@@ -53,6 +53,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     artist TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
     type TEXT NOT NULL CHECK(type IN ('album', 'single', 'ep')),
     release_date TEXT,
     cover_image_url TEXT,

@@ -98,7 +98,7 @@ export default async function HomePage() {
                   {latestRelease.description}
                 </p>
               )}
-              <Link href={`/music/${latestRelease.id}`}>
+              <Link href={`/music/${latestRelease.slug}`}>
                 <Button size="lg">
                   <Music2 className="mr-2 h-5 w-5" />
                   Play Album

@@ -2,18 +2,17 @@ import db from "@/lib/db";
 import { TrackList } from "@/components/track-list";
 import { ShareButtons } from "@/components/share-buttons";
 import { EmbedPlayer } from "@/components/embed-player";
-import Image from "next/image";
+import { AlbumArtPlayer } from "@/components/album-art-player";
+import { PlayAlbumButton } from "@/components/play-album-button";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Play } from "lucide-react";
 import type { Metadata } from "next";
 
 // Force dynamic rendering
 export const dynamic = "force-dynamic";
 
-async function getRelease(id: string) {
-  const stmt = db.prepare("SELECT * FROM releases WHERE id = ?");
-  return stmt.get(id) as any;
+async function getRelease(slug: string) {
+  const stmt = db.prepare("SELECT * FROM releases WHERE slug = ?");
+  return stmt.get(slug) as any;
 }
 
 async function getTracks(releaseId: string) {
@@ -26,10 +25,10 @@ async function getTracks(releaseId: string) {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  const release = await getRelease(id);
+  const { slug } = await params;
+  const release = await getRelease(slug);
 
   if (!release) {
     return {
@@ -38,8 +37,15 @@ export async function generateMetadata({
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://artist-portfolio.com";
-  const releaseUrl = `${siteUrl}/music/${id}`;
+  const releaseUrl = `${siteUrl}/music/${slug}`;
   const description = release.description || `${release.title} by ${release.artist}`;
+
+  // Convert relative image URL to absolute
+  const imageUrl = release.cover_image_url
+    ? release.cover_image_url.startsWith('http://') || release.cover_image_url.startsWith('https://')
+      ? release.cover_image_url
+      : `${siteUrl}${release.cover_image_url}`
+    : null;
 
   return {
     title: `${release.title} by ${release.artist}`,
@@ -49,10 +55,10 @@ export async function generateMetadata({
       description,
       type: "music.album",
       url: releaseUrl,
-      images: release.cover_image_url
+      images: imageUrl
         ? [
             {
-              url: release.cover_image_url,
+              url: imageUrl,
               width: 1200,
               height: 1200,
               alt: `${release.title} cover art`,
@@ -64,7 +70,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: `${release.title} by ${release.artist}`,
       description,
-      images: release.cover_image_url ? [release.cover_image_url] : [],
+      images: imageUrl ? [imageUrl] : [],
     },
   };
 }
@@ -72,15 +78,12 @@ export async function generateMetadata({
 export default async function ReleasePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ slug: string }>;
 }) {
-  // Await params in Next.js 15/16 if necessary, but standard access works for now in 14/15
-  // Note: Next.js 15+ might require awaiting params. Let's assume standard behavior for now or await if it's a promise.
-  // Actually, in Next.js 15, params is a Promise. Let's await it to be safe.
-  const { id } = await params;
+  const { slug } = await params;
 
-  const release = await getRelease(id);
-  const tracks = await getTracks(id);
+  const release = await getRelease(slug);
+  const tracks = await getTracks(release.id.toString());
 
   if (!release) {
     notFound();
@@ -91,21 +94,11 @@ export default async function ReleasePage({
       <div className="flex flex-col md:flex-row gap-8 md:gap-12">
         {/* Album Art & Info */}
         <div className="w-full md:w-1/3 flex flex-col gap-6">
-          <div className="aspect-square relative rounded-xl overflow-hidden shadow-2xl bg-muted">
-            {release.cover_image_url ? (
-              <Image
-                src={release.cover_image_url}
-                alt={release.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
-                No Image
-              </div>
-            )}
-          </div>
+          <AlbumArtPlayer
+            coverImageUrl={release.cover_image_url}
+            title={release.title}
+            tracks={tracks}
+          />
 
           <div className="text-center md:text-left">
             <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">
@@ -119,12 +112,14 @@ export default async function ReleasePage({
             </p>
 
             <div className="mt-6 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
-              <Button className="w-full md:w-auto">
-                <Play className="mr-2 h-4 w-4" /> Play Album
-              </Button>
+              <PlayAlbumButton
+                tracks={tracks}
+                coverImageUrl={release.cover_image_url}
+                className="w-full md:w-auto"
+              />
               <ShareButtons
                 title={`${release.title} by ${release.artist}`}
-                url={`/music/${release.id}`}
+                url={`/music/${release.slug}`}
                 description={release.description || `${release.title} by ${release.artist}`}
                 image={release.cover_image_url || ""}
               />
@@ -147,3 +142,4 @@ export default async function ReleasePage({
     </div>
   );
 }
+

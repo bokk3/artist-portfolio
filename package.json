@@ -1,13 +1,14 @@
 {
   "name": "artist-portfolio",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:init": "node scripts/init-db.js"
+    "db:init": "node scripts/init-db.js",
+    "db:migrate": "node scripts/migrate-db.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

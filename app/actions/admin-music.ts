@@ -6,6 +6,27 @@ import { redirect } from "next/navigation";
 
 // --- Releases ---
 
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/--+/g, "-")
+    .trim();
+}
+
+function ensureUniqueSlug(baseSlug: string): string {
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (db.prepare("SELECT id FROM releases WHERE slug = ?").get(slug)) {
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  
+  return slug;
+}
+
 export async function createRelease(formData: FormData) {
   const title = formData.get("title") as string;
   const artist = formData.get("artist") as string;
@@ -14,14 +35,18 @@ export async function createRelease(formData: FormData) {
   const cover_image_url = formData.get("cover_image_url") as string;
   const description = formData.get("description") as string;
 
+  const baseSlug = generateSlug(title);
+  const slug = ensureUniqueSlug(baseSlug);
+
   const stmt = db.prepare(`
-    INSERT INTO releases (title, artist, type, release_date, cover_image_url, description)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO releases (title, artist, slug, type, release_date, cover_image_url, description)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
 
   const info = stmt.run(
     title,
     artist,
+    slug,
     type,
     release_date,
     cover_image_url,
@@ -59,13 +84,23 @@ export async function addTrack(formData: FormData) {
   `);
 
   stmt.run(release_id, title, artist, audio_url, duration, track_number, waveform_data || null);
-  revalidatePath(`/music/${release_id}`);
+  
+  // Get release slug for revalidation
+  const release = db.prepare("SELECT slug FROM releases WHERE id = ?").get(release_id) as any;
+  if (release?.slug) {
+    revalidatePath(`/music/${release.slug}`);
+  }
   revalidatePath(`/admin/music/${release_id}`);
 }
 
 export async function deleteTrack(id: number, release_id: number) {
   const stmt = db.prepare("DELETE FROM tracks WHERE id = ?");
   stmt.run(id);
-  revalidatePath(`/music/${release_id}`);
+  
+  // Get release slug for revalidation
+  const release = db.prepare("SELECT slug FROM releases WHERE id = ?").get(release_id) as any;
+  if (release?.slug) {
+    revalidatePath(`/music/${release.slug}`);
+  }
   revalidatePath(`/admin/music/${release_id}`);
 }
