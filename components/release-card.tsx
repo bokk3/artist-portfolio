@@ -13,6 +13,7 @@ type Release = {
   id: number;
   title: string;
   artist: string;
+  slug: string;
   type: string;
   release_date: string;
   cover_image_url: string;
@@ -54,7 +55,7 @@ export function ReleaseCard({ release, index = 0 }: { release: Release; index?: 
             className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
             whileHover={{ scale: 1.05 }}
           >
-            <Link href={`/music/${release.id}`}>
+            <Link href={`/music/${release.slug}`}>
               <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                 <Button
                   size="icon"

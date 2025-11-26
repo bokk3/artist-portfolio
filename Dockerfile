@@ -44,6 +44,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/db ./db
 
 # Install production dependencies (needed for bcryptjs and better-sqlite3)
 RUN npm install --production --ignore-scripts && \
@@ -52,11 +53,14 @@ RUN npm install --production --ignore-scripts && \
 # Create data directory for SQLite
 RUN mkdir -p /app/db && chown -R nextjs:nodejs /app/db
 
-# Create entrypoint script for database initialization
+# Create entrypoint script for database initialization and migration
 RUN echo '#!/bin/sh' > /app/docker-entrypoint.sh && \
     echo 'if [ ! -f /app/db/artist.db ]; then' >> /app/docker-entrypoint.sh && \
     echo '  echo "🚀 First run detected - initializing database..."' >> /app/docker-entrypoint.sh && \
     echo '  node /app/scripts/init-db.js' >> /app/docker-entrypoint.sh && \
+    echo 'else' >> /app/docker-entrypoint.sh && \
+    echo '  echo "🔄 Running database migrations..."' >> /app/docker-entrypoint.sh && \
+    echo '  node /app/scripts/migrate-db.js || echo "⚠️  Migration completed with warnings"' >> /app/docker-entrypoint.sh && \
     echo 'fi' >> /app/docker-entrypoint.sh && \
     echo 'exec node server.js' >> /app/docker-entrypoint.sh && \
     chmod +x /app/docker-entrypoint.sh

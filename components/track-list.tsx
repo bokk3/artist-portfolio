@@ -34,12 +34,25 @@ export function TrackList({
   tracks: Track[];
   coverImage?: string;
 }) {
-  const { playTrack, currentTrack, isPlaying, togglePlay } = usePlayer();
+  const { playTrack, currentTrack, isPlaying, togglePlay, setPlaylist } = usePlayer();
 
   const handlePlay = (track: Track) => {
     if (currentTrack?.id === track.id) {
       togglePlay();
     } else {
+      // Convert tracks to player format
+      const playerTracks = tracks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        artist: t.artist,
+        audioUrl: t.audio_url,
+        coverImageUrl: coverImage,
+      }));
+
+      // Set the playlist
+      setPlaylist(playerTracks);
+
+      // Play the selected track
       playTrack({
         id: track.id,
         title: track.title,
