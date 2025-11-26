@@ -57,12 +57,7 @@ export function Player() {
   const [showQueue, setShowQueue] = useState(false);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [audioManagerReady, setAudioManagerReady] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  // Ensure component is mounted before rendering (for portal)
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Initialize AudioManager and WaveSurfer
   useEffect(() => {
@@ -356,7 +351,10 @@ export function Player() {
     };
   }, [currentTrack, isPlaying, currentTime, duration, togglePlay, playNext, playPrev]);
 
-  if (!currentTrack) return null;
+  // Mount check - component only renders on client
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -365,24 +363,28 @@ export function Player() {
   };
 
   // Player UI component - floating at bottom of viewport
-  const playerUI = (
+  // Only render if we have a currentTrack
+  const playerUI = currentTrack ? (
     <div 
       data-player="true"
       className="bg-background/80 backdrop-blur-xl border-t border-border/10 flex items-center px-4 gap-4 shadow-lg"
       style={{ 
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
+        position: 'fixed' as const,
+        bottom: '0px',
+        left: '0px',
+        right: '0px',
         width: '100%',
         maxWidth: '100vw',
         height: '80px',
-        margin: 0,
+        margin: '0',
         padding: '0 1rem',
-        boxSizing: 'border-box',
+        boxSizing: 'border-box' as const,
         zIndex: 99999,
-        transform: 'translateZ(0)', // Force hardware acceleration
-        isolation: 'isolate' // Create new stacking context
+        transform: 'translateZ(0)',
+        isolation: 'isolate' as const,
+        // Force these to override any parent styles
+        top: 'auto',
+        display: 'flex',
       }}
     >
         {/* Track Info */}
@@ -577,34 +579,45 @@ export function Player() {
           </Drawer>
         </div>
       </div>
-  );
+  ) : null;
 
-  // Render everything via portal to document.body to ensure fixed positioning works
-  // Always render if we have a body element (client-side)
-  if (typeof window !== 'undefined' && document.body) {
-    return createPortal(
-      <>
-        {/* Audio Visualizer - Background Effects */}
-        <BeatReactiveBackground
-          analyser={analyser}
-          isPlaying={isPlaying && !!currentTrack}
-        />
-        <AudioVisualizer
-          analyser={analyser}
-          isPlaying={isPlaying && !!currentTrack}
-        />
-        {playerUI}
-        {/* Desktop Queue Sidebar */}
-        {showQueue && playlist.length > 0 && (
-          <div className="hidden md:block fixed bottom-20 right-4 w-80 h-[calc(100vh-8rem)] bg-background/95 backdrop-blur-xl border border-border/10 rounded-lg shadow-2xl z-40">
-            <QueueInterface />
-          </div>
-        )}
-      </>,
-      document.body
-    );
+  // Force player element to be fixed after render
+  useEffect(() => {
+    if (!isMounted || typeof window === 'undefined') return;
+    
+    // Find the player element anywhere in the document and ensure it's fixed
+    const playerElement = document.querySelector('[data-player="true"]') as HTMLElement;
+    if (playerElement) {
+      // Force styles directly on the element with !important
+      playerElement.style.cssText += 'position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important;';
+    }
+  }, [isMounted, currentTrack]);
+
+  // ALWAYS return null in normal render - component never appears in layout tree
+  if (!isMounted || typeof window === 'undefined' || !document.body) {
+    return null;
   }
 
-  // Return null only on server-side
-  return null;
+  // Render portal content DIRECTLY to document.body - no container
+  return createPortal(
+    <>
+      {/* Audio Visualizer - Background Effects */}
+      <BeatReactiveBackground
+        analyser={analyser}
+        isPlaying={isPlaying && !!currentTrack}
+      />
+      <AudioVisualizer
+        analyser={analyser}
+        isPlaying={isPlaying && !!currentTrack}
+      />
+      {playerUI}
+      {/* Desktop Queue Sidebar */}
+      {showQueue && playlist.length > 0 && (
+        <div className="hidden md:block fixed bottom-20 right-4 w-80 h-[calc(100vh-8rem)] bg-background/95 backdrop-blur-xl border border-border/10 rounded-lg shadow-2xl z-40">
+          <QueueInterface />
+        </div>
+      )}
+    </>,
+    document.body
+  );
 }

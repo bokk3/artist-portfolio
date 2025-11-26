@@ -99,6 +99,7 @@ export function BeatReactiveBackground({
   const analyzerRef = useRef<AudioAnalyzer | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const lastFrequencyDataRef = useRef<Uint8Array | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -121,10 +122,12 @@ export function BeatReactiveBackground({
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Clear canvas when not playing (static background)
-    if (!isPlaying || !analyser) {
+    // Only clear canvas and cleanup when analyser is null (no track loaded)
+    // When paused, we'll freeze on the last frame
+    if (!analyser) {
       ctx.fillStyle = "#0a1929"; // Background color
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      lastFrequencyDataRef.current = null;
       
       if (analyzerRef.current) {
         analyzerRef.current.cleanup();
@@ -144,14 +147,14 @@ export function BeatReactiveBackground({
     try {
       analyzer.initialize(analyser);
       
-      // Store frequency data for drawing
-      let currentFrequencyData: Uint8Array | null = null;
-      
-      // Start analyzer FIRST to get data flowing
+      // Start analyzer to get data flowing
+      // The callback will update the ref, and we'll use it in the draw loop
       analyzer.start(
         undefined, // No beat callback needed here, we draw continuously
         (frequencyData) => {
-          currentFrequencyData = frequencyData;
+          // Always update the ref when we get new data
+          // When paused, we'll use the last stored data in the draw loop
+          lastFrequencyDataRef.current = frequencyData;
         }
       );
       
@@ -161,6 +164,9 @@ export function BeatReactiveBackground({
           animationFrameRef.current = requestAnimationFrame(draw);
           return;
         }
+        
+        // Use last stored frequency data (freezes when paused)
+        const currentFrequencyData = lastFrequencyDataRef.current;
         
         // If we don't have frequency data yet, keep drawing (showing static background)
         if (!currentFrequencyData) {
