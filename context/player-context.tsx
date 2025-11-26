@@ -28,6 +28,10 @@ type PlayerContextType = {
   playPrev: () => void;
   playlist: Track[];
   setPlaylist: (tracks: Track[]) => void;
+  removeTrack: (trackId: number) => void;
+  reorderTracks: (fromIndex: number, toIndex: number) => void;
+  clearQueue: () => void;
+  stop: () => void;
 };
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -38,7 +42,16 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [volume, setVolume] = useState(0.8);
   const [playlist, setPlaylist] = useState<Track[]>([]);
 
+  const stop = () => {
+    setIsPlaying(false);
+    // Note: The actual WaveSurfer instance cleanup is handled in the Player component
+  };
+
   const playTrack = (track: Track) => {
+    // Stop current track before playing a new one
+    if (currentTrack && currentTrack.id !== track.id) {
+      stop();
+    }
     setCurrentTrack(track);
     setIsPlaying(true);
   };
@@ -61,6 +74,29 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     playTrack(playlist[prevIndex]);
   };
 
+  const removeTrack = (trackId: number) => {
+    // Don't remove the currently playing track
+    if (currentTrack?.id === trackId) return;
+    
+    setPlaylist(playlist.filter((t) => t.id !== trackId));
+  };
+
+  const reorderTracks = (fromIndex: number, toIndex: number) => {
+    const newPlaylist = [...playlist];
+    const [removed] = newPlaylist.splice(fromIndex, 1);
+    newPlaylist.splice(toIndex, 0, removed);
+    setPlaylist(newPlaylist);
+  };
+
+  const clearQueue = () => {
+    // Keep the current track playing, just clear the rest of the queue
+    if (currentTrack) {
+      setPlaylist([currentTrack]);
+    } else {
+      setPlaylist([]);
+    }
+  };
+
   return (
     <PlayerContext.Provider
       value={{
@@ -74,6 +110,10 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         playPrev,
         playlist,
         setPlaylist,
+        removeTrack,
+        reorderTracks,
+        clearQueue,
+        stop,
       }}
     >
       {children}

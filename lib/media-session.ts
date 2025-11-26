@@ -59,14 +59,31 @@ export function updateMediaSessionPosition(
   const mediaSession = (navigator as any).mediaSession;
   if (!mediaSession || !mediaSession.setPositionState) return;
 
+  // Validate and clamp values
+  // Duration must be positive and finite
+  if (!duration || !isFinite(duration) || duration <= 0) {
+    return; // Don't update if duration is invalid
+  }
+
+  // Position must be between 0 and duration
+  const clampedPosition = Math.max(0, Math.min(position, duration));
+  
+  // Playback rate must be positive
+  const clampedPlaybackRate = Math.max(0.1, Math.min(playbackRate, 4.0));
+
+  // Only update if position is valid
+  if (!isFinite(clampedPosition) || clampedPosition < 0) {
+    return;
+  }
+
   try {
     mediaSession.setPositionState({
       duration,
-      position,
-      playbackRate,
+      position: clampedPosition,
+      playbackRate: clampedPlaybackRate,
     });
   } catch (error) {
-    // Some browsers don't support setPositionState
-    console.log("Position state not supported:", error);
+    // Some browsers don't support setPositionState or have strict validation
+    // Silently fail to avoid console spam
   }
 }

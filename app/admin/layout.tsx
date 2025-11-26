@@ -40,6 +40,9 @@ export default function AdminLayout({
           <h1 className="text-xl font-display font-bold text-primary">
             Admin Panel
           </h1>
+          <p className="text-xs text-muted-foreground mt-1 font-mono">
+            v{process.env.NEXT_PUBLIC_APP_VERSION || "dev"}
+          </p>
         </div>
 
         <nav className="flex-1 p-4 space-y-2">

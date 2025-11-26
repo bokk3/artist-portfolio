@@ -1,17 +1,20 @@
 version: "3.8"
 
+# Example production docker-compose.yml using DockerHub image
+# Replace 'yourusername' with your actual DockerHub username
+
 services:
   app:
-    # Use DockerHub image (replace 'yourusername' with your DockerHub username)
-    # image: yourusername/artist-portfolio:1.1.0
-    # Or use latest
+    # Use DockerHub image instead of building locally
+    image: yourusername/artist-portfolio:1.1.0
+    # Or use latest tag:
     # image: yourusername/artist-portfolio:latest
     
-    # For local development, uncomment these lines:
-    image: artist-portfolio:latest
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # Remove the build section when using DockerHub image
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    
     ports:
       - "3000:3000"
     environment:
@@ -39,7 +42,7 @@ services:
 
     healthcheck:
       test:
-        
+        [
           "CMD",
           "wget",
           "--no-verbose",
@@ -61,17 +64,3 @@ volumes:
   portfolio_uploads:
     driver: local
 
-# Optional: Add a reverse proxy with SSL
-# Uncomment if you want nginx with automatic SSL
-#
-# nginx:
-#   image: nginx:alpine
-#   ports:
-#     - "80:80"
-#     - "443:443"
-#   volumes:
-#     - ./nginx.conf:/etc/nginx/nginx.conf:ro
-#     - ./ssl:/etc/nginx/ssl:ro
-#   depends_on:
-#     - app
-#   restart: unless-stopped

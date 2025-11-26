@@ -54,12 +54,17 @@ export function Navbar() {
   return (
     <nav className="container mx-auto flex h-16 items-center justify-between px-4">
       {/* Logo */}
-      <Link
-        href="/"
-        className="font-display text-2xl font-bold tracking-tighter text-primary hover:text-primary/80 transition-colors"
-      >
-        ARTIST<span className="text-foreground">NAME</span>
-      </Link>
+      <div className="flex items-center gap-2">
+        <Link
+          href="/"
+          className="font-display text-2xl font-bold tracking-tighter text-primary hover:text-primary/80 transition-colors"
+        >
+          ARTIST<span className="text-foreground">NAME</span>
+        </Link>
+        <span className="text-xs text-muted-foreground/60 font-mono hidden sm:inline">
+          v{process.env.NEXT_PUBLIC_APP_VERSION || "dev"}
+        </span>
+      </div>
 
       {/* Desktop Nav */}
       <div className="hidden md:flex items-center gap-6">

@@ -11,8 +11,48 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 async function getRelease(slug: string) {
-  const stmt = db.prepare("SELECT * FROM releases WHERE slug = ?");
-  return stmt.get(slug) as any;
+  // Check if slug column exists
+  try {
+    const tableInfo = db.prepare("PRAGMA table_info(releases)").all() as any[];
+    const hasSlugColumn = tableInfo.some((col) => col.name === "slug");
+    
+    if (!hasSlugColumn) {
+      console.error("❌ 'slug' column is missing from releases table. Please run: npm run db:migrate");
+      // Try to add the column and generate slugs
+      try {
+        db.exec(`ALTER TABLE releases ADD COLUMN slug TEXT`);
+        // Generate slugs for existing releases
+        const releases = db.prepare("SELECT id, title FROM releases WHERE slug IS NULL OR slug = ''").all() as any[];
+        for (const release of releases) {
+          const generatedSlug = release.title
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/--+/g, "-")
+            .trim();
+          
+          let uniqueSlug = generatedSlug;
+          let counter = 1;
+          while (db.prepare("SELECT id FROM releases WHERE slug = ?").get(uniqueSlug)) {
+            uniqueSlug = `${generatedSlug}-${counter}`;
+            counter++;
+          }
+          
+          db.prepare("UPDATE releases SET slug = ? WHERE id = ?").run(uniqueSlug, release.id);
+        }
+        console.log("✅ Auto-migrated: Added slug column and generated slugs");
+      } catch (migrationError) {
+        console.error("❌ Failed to auto-migrate:", migrationError);
+        throw new Error("Database migration required. Please run: npm run db:migrate");
+      }
+    }
+    
+    const stmt = db.prepare("SELECT * FROM releases WHERE slug = ?");
+    return stmt.get(slug) as any;
+  } catch (error) {
+    console.error("Error in getRelease:", error);
+    throw error;
+  }
 }
 
 async function getTracks(releaseId: string) {
@@ -36,25 +76,42 @@ export async function generateMetadata({
     };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://artist-portfolio.com";
+  // Get site URL from environment or construct from request
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://artist-portfolio.com";
   const releaseUrl = `${siteUrl}/music/${slug}`;
   const description = release.description || `${release.title} by ${release.artist}`;
 
   // Convert relative image URL to absolute
-  const imageUrl = release.cover_image_url
-    ? release.cover_image_url.startsWith('http://') || release.cover_image_url.startsWith('https://')
-      ? release.cover_image_url
-      : `${siteUrl}${release.cover_image_url}`
-    : null;
+  // Ensure the URL starts with / if it's relative, and make it absolute
+  // WhatsApp requires HTTPS URLs
+  let imageUrl: string | null = null;
+  if (release.cover_image_url) {
+    if (release.cover_image_url.startsWith('http://') || release.cover_image_url.startsWith('https://')) {
+      // Force HTTPS for WhatsApp compatibility
+      imageUrl = release.cover_image_url.startsWith('https://') 
+        ? release.cover_image_url 
+        : release.cover_image_url.replace('http://', 'https://');
+    } else {
+      // Ensure it starts with / for proper URL construction
+      const imagePath = release.cover_image_url.startsWith('/') 
+        ? release.cover_image_url 
+        : `/${release.cover_image_url}`;
+      // Ensure HTTPS
+      const baseUrl = siteUrl.startsWith('https://') ? siteUrl : siteUrl.replace('http://', 'https://');
+      imageUrl = `${baseUrl}${imagePath}`;
+    }
+  }
 
   return {
     title: `${release.title} by ${release.artist}`,
     description,
+    metadataBase: new URL(siteUrl),
     openGraph: {
       title: `${release.title} by ${release.artist}`,
       description,
       type: "music.album",
       url: releaseUrl,
+      siteName: "Artist Portfolio",
       images: imageUrl
         ? [
             {
@@ -62,6 +119,7 @@ export async function generateMetadata({
               width: 1200,
               height: 1200,
               alt: `${release.title} cover art`,
+              type: "image/jpeg",
             },
           ]
         : [],
@@ -72,6 +130,15 @@ export async function generateMetadata({
       description,
       images: imageUrl ? [imageUrl] : [],
     },
+    // Additional meta tags for WhatsApp compatibility
+    other: imageUrl
+      ? {
+          "og:image:width": "1200",
+          "og:image:height": "1200",
+          "og:image:type": "image/jpeg",
+          "og:image:secure_url": imageUrl.startsWith('https://') ? imageUrl : imageUrl.replace('http://', 'https://'),
+        }
+      : {},
   };
 }
 

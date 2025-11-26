@@ -18,8 +18,10 @@ const outfit = Outfit({
 // For this implementation, we will assume Clash Display is loaded via CSS or we can use a similar Google Font like 'Syne' as a temporary fallback if needed,
 // but the rules say "Clash Display". We will add a class for it.
 
+const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://artist-portfolio.com";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://artist-portfolio.com"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Artist Portfolio - Electronic Music Producer",
     template: "%s | Artist Portfolio",
@@ -83,15 +85,17 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col`}
+        className={`${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col relative`}
       >
         <PlayerProvider>
+          {/* Audio Visualizer Background - rendered in Player component */}
+          
           {/* Navbar */}
           <header className="fixed top-0 w-full z-50 border-b border-border/10 bg-background/80 backdrop-blur-md">
             <Navbar />
           </header>
 
-          <main className="flex-1 pt-16 pb-24">
+          <main className="flex-1 pt-16 pb-24 relative z-10">
             <PageTransition>{children}</PageTransition>
           </main>
 
