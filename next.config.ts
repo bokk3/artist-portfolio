@@ -24,6 +24,8 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion", "date-fns"],
   },
+  // Empty turbopack config to silence webpack/turbopack conflict with next-pwa
+  turbopack: {},
 };
 
 // Only use PWA in production to avoid Turbopack compatibility issues
