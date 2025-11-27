@@ -8,10 +8,7 @@ interface AudioVisualizerProps {
   isPlaying: boolean;
 }
 
-export function AudioVisualizer({
-  analyser,
-  isPlaying,
-}: AudioVisualizerProps) {
+export function AudioVisualizer({ analyser, isPlaying }: AudioVisualizerProps) {
   const analyzerRef = useRef<AudioAnalyzer | null>(null);
   const shakeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastBeatTimeRef = useRef<number>(0);
@@ -37,33 +34,31 @@ export function AudioVisualizer({
 
     try {
       analyzer.initialize(analyser);
-      
-      analyzer.start(
-        (intensity) => {
-          // Beat detected - apply shake effect to body
-          const now = Date.now();
-          // Throttle beats to avoid too many rapid shakes (reduced to 30ms for more responsiveness)
-          if (now - lastBeatTimeRef.current > 30) {
-            lastBeatTimeRef.current = now;
-            
-            // Very low threshold - trigger on any audio activity
-            // With 0.05 threshold and 3.0 multiplier, intensity will be at least 0.15
-            if (intensity > 0.05) {
-              document.body.classList.add("beat-shake");
-              
-              // Clear any existing timeout
-              if (shakeTimeoutRef.current) {
-                clearTimeout(shakeTimeoutRef.current);
-              }
-              
-              // Reset shake after animation (shorter for more responsive feel)
-              shakeTimeoutRef.current = setTimeout(() => {
-                document.body.classList.remove("beat-shake");
-              }, 120);
+
+      analyzer.start((intensity) => {
+        // Beat detected - apply shake effect to body
+        const now = Date.now();
+        // Throttle beats to avoid too many rapid shakes (reduced to 30ms for more responsiveness)
+        if (now - lastBeatTimeRef.current > 30) {
+          lastBeatTimeRef.current = now;
+
+          // Very low threshold - trigger on any audio activity
+          // With 0.05 threshold and 3.0 multiplier, intensity will be at least 0.15
+          if (intensity > 0.05) {
+            document.body.classList.add("beat-shake");
+
+            // Clear any existing timeout
+            if (shakeTimeoutRef.current) {
+              clearTimeout(shakeTimeoutRef.current);
             }
+
+            // Reset shake after animation (shorter for more responsive feel)
+            shakeTimeoutRef.current = setTimeout(() => {
+              document.body.classList.remove("beat-shake");
+            }, 120);
           }
         }
-      );
+      });
     } catch (error) {
       console.error("❌ Failed to initialize audio analyzer:", error);
     }
@@ -128,7 +123,7 @@ export function BeatReactiveBackground({
       ctx.fillStyle = "#0a1929"; // Background color
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       lastFrequencyDataRef.current = null;
-      
+
       if (analyzerRef.current) {
         analyzerRef.current.cleanup();
         analyzerRef.current = null;
@@ -146,7 +141,7 @@ export function BeatReactiveBackground({
 
     try {
       analyzer.initialize(analyser);
-      
+
       // Start analyzer to get data flowing
       // The callback will update the ref, and we'll use it in the draw loop
       analyzer.start(
@@ -157,17 +152,17 @@ export function BeatReactiveBackground({
           lastFrequencyDataRef.current = frequencyData;
         }
       );
-      
+
       // Draw function for the visualizer
       const draw = () => {
         if (!ctx || !canvas) {
           animationFrameRef.current = requestAnimationFrame(draw);
           return;
         }
-        
+
         // Use last stored frequency data (freezes when paused)
         const currentFrequencyData = lastFrequencyDataRef.current;
-        
+
         // If we don't have frequency data yet, keep drawing (showing static background)
         if (!currentFrequencyData) {
           ctx.fillStyle = "#0a1929";
@@ -175,43 +170,56 @@ export function BeatReactiveBackground({
           animationFrameRef.current = requestAnimationFrame(draw);
           return;
         }
-        
+
         // Clear with minimal fade for more visible effects
         ctx.fillStyle = "rgba(10, 25, 41, 0.3)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
+
         // Draw frequency bars across the entire screen
         const barCount = Math.min(currentFrequencyData.length, 128);
         const barWidth = canvas.width / barCount;
-        const maxBarHeight = canvas.height;
-        
+        // Constrain to bottom half of screen
+        const maxBarHeight = canvas.height / 2;
+
         // Calculate overall energy for background glow
-        const avgEnergy = Array.from(currentFrequencyData.slice(0, 32)).reduce((a, b) => a + b, 0) / 32 / 255;
-        
+        const avgEnergy =
+          Array.from(currentFrequencyData.slice(0, 32)).reduce(
+            (a, b) => a + b,
+            0
+          ) /
+          32 /
+          255;
+
         // Draw bars with gradient
         for (let i = 0; i < barCount; i++) {
           const value = currentFrequencyData[i] / 255;
-          const boostedValue = Math.min(value * 3.0, 1.0);
-          const barHeight = boostedValue * maxBarHeight;
-          
+          // Reduce boost for less "flashy" look, and apply smoothing curve
+          const boostedValue = Math.pow(value, 1.5) * 2.0;
+          const barHeight = Math.min(boostedValue * maxBarHeight, maxBarHeight);
+
           if (barHeight < 2) continue;
-          
+
           // Color gradient: low frequencies (bass) = pink, high = cyan
           const hue = 240 + (i / barCount) * 120;
-          const saturation = 90;
-          const lightness = 50 + (boostedValue * 30);
-          
+          const saturation = 70; // Reduced saturation
+          const lightness = 50 + boostedValue * 20; // Reduced lightness range
+
           const gradient = ctx.createLinearGradient(
             i * barWidth,
             canvas.height - barHeight,
             i * barWidth,
             canvas.height
           );
-          
-          gradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${lightness}%, ${0.98})`);
-          gradient.addColorStop(0.5, `hsla(${hue}, ${saturation}%, ${lightness}%, ${0.9})`);
-          gradient.addColorStop(1, `hsla(${hue}, ${saturation}%, ${lightness}%, 0.7)`);
-          
+
+          gradient.addColorStop(
+            0,
+            `hsla(${hue}, ${saturation}%, ${lightness}%, ${0.8})`
+          );
+          gradient.addColorStop(
+            1,
+            `hsla(${hue}, ${saturation}%, ${lightness}%, 0.3)`
+          );
+
           ctx.fillStyle = gradient;
           ctx.fillRect(
             i * barWidth,
@@ -220,26 +228,43 @@ export function BeatReactiveBackground({
             barHeight
           );
         }
-        
+
         // Draw center circle that pulses with bass
-        const bassIntensity = Math.max(...currentFrequencyData.slice(0, 8)) / 255;
+        const bassIntensity =
+          Math.max(...currentFrequencyData.slice(0, 8)) / 255;
         if (bassIntensity > 0.03) {
           const centerX = canvas.width / 2;
           const centerY = canvas.height / 2;
-          const radius = 100 + (bassIntensity * 400);
-          
-          const circleGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-          circleGradient.addColorStop(0, `rgba(255, 16, 240, ${Math.min(bassIntensity * 0.8, 0.6)})`);
-          circleGradient.addColorStop(0.3, `rgba(255, 16, 240, ${bassIntensity * 0.4})`);
-          circleGradient.addColorStop(0.6, `rgba(255, 16, 240, ${bassIntensity * 0.2})`);
+          const radius = 100 + bassIntensity * 400;
+
+          const circleGradient = ctx.createRadialGradient(
+            centerX,
+            centerY,
+            0,
+            centerX,
+            centerY,
+            radius
+          );
+          circleGradient.addColorStop(
+            0,
+            `rgba(255, 16, 240, ${Math.min(bassIntensity * 0.8, 0.6)})`
+          );
+          circleGradient.addColorStop(
+            0.3,
+            `rgba(255, 16, 240, ${bassIntensity * 0.4})`
+          );
+          circleGradient.addColorStop(
+            0.6,
+            `rgba(255, 16, 240, ${bassIntensity * 0.2})`
+          );
           circleGradient.addColorStop(1, "rgba(255, 16, 240, 0)");
-          
+
           ctx.fillStyle = circleGradient;
           ctx.beginPath();
           ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
           ctx.fill();
         }
-        
+
         // Add overall background glow based on energy
         if (avgEnergy > 0.1) {
           const glowGradient = ctx.createRadialGradient(
@@ -250,16 +275,19 @@ export function BeatReactiveBackground({
             canvas.height / 2,
             Math.max(canvas.width, canvas.height) * 0.8
           );
-          glowGradient.addColorStop(0, `rgba(255, 16, 240, ${avgEnergy * 0.1})`);
+          glowGradient.addColorStop(
+            0,
+            `rgba(255, 16, 240, ${avgEnergy * 0.1})`
+          );
           glowGradient.addColorStop(1, "rgba(255, 16, 240, 0)");
-          
+
           ctx.fillStyle = glowGradient;
           ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
-        
+
         animationFrameRef.current = requestAnimationFrame(draw);
       };
-      
+
       // Start the draw loop AFTER analyzer is started
       draw();
     } catch (error) {
@@ -296,4 +324,3 @@ export function BeatReactiveBackground({
     />
   );
 }
-

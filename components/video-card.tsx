@@ -28,7 +28,13 @@ function getEmbedUrl(videoUrl: string, platform: string): string {
   return videoUrl;
 }
 
-export function VideoCard({ video, index = 0 }: { video: Video; index?: number }) {
+export function VideoCard({
+  video,
+  index = 0,
+}: {
+  video: Video;
+  index?: number;
+}) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const embedUrl = getEmbedUrl(video.video_url, video.platform);
 
@@ -40,7 +46,7 @@ export function VideoCard({ video, index = 0 }: { video: Video; index?: number }
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
       <Card
-        className="overflow-hidden group cursor-pointer border-border/10 hover:border-primary/50 transition-all"
+        className="overflow-hidden group cursor-pointer glass-card hover-lift hover:border-primary/50"
         onClick={() => setDialogOpen(true)}
       >
         <AspectRatio ratio={16 / 9} className="relative bg-muted">

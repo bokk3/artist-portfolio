@@ -10,6 +10,8 @@ import { AnimatedHero } from "@/components/animated-hero";
 import { ArrowRight, Music2, Video, BookOpen } from "lucide-react";
 import { SectionWrapper } from "@/components/section-wrapper";
 import { getSetting } from "@/app/actions/admin-settings";
+import { Starfield } from "@/components/ui/starfield";
+import { Marquee } from "@/components/ui/marquee";
 
 export const dynamic = "force-dynamic";
 
@@ -62,8 +64,38 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
+      <Starfield
+        starColor="#ffffff"
+        backgroundColor="transparent"
+        speed={0.05}
+      />
+
       {/* Animated Hero Section */}
       <AnimatedHero latestRelease={latestRelease} heroImage={heroImage} />
+
+      {/* Marquee Announcement */}
+      <div className="bg-primary/10 border-y border-primary/20 backdrop-blur-sm">
+        <Marquee className="py-2" speed={30}>
+          <span className="text-xl font-display font-bold mx-8 text-primary uppercase tracking-widest">
+            New Album Out Now
+          </span>
+          <span className="text-xl font-display font-bold mx-8 text-foreground uppercase tracking-widest">
+            •
+          </span>
+          <span className="text-xl font-display font-bold mx-8 text-primary uppercase tracking-widest">
+            World Tour 2025
+          </span>
+          <span className="text-xl font-display font-bold mx-8 text-foreground uppercase tracking-widest">
+            •
+          </span>
+          <span className="text-xl font-display font-bold mx-8 text-primary uppercase tracking-widest">
+            Listen on Spotify
+          </span>
+          <span className="text-xl font-display font-bold mx-8 text-foreground uppercase tracking-widest">
+            •
+          </span>
+        </Marquee>
+      </div>
 
       {/* Latest Release Highlight */}
       {latestRelease && (
@@ -107,7 +139,10 @@ export default async function HomePage() {
                 </p>
               )}
               <Link href={`/music/${latestRelease.slug}`}>
-                <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 hover:shadow-primary/50 font-semibold min-h-[48px]">
+                <Button
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 shadow-lg shadow-primary/30 hover:shadow-primary/50 font-semibold min-h-[48px]"
+                >
                   <Music2 className="mr-2 h-5 w-5" />
                   Play Album
                 </Button>

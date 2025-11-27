@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { MagneticButton } from "@/components/ui/magnetic-button";
 import { Play, ArrowRight } from "lucide-react";
 
 type HeroProps = {
@@ -167,7 +168,11 @@ export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
           variants={itemVariants}
           transition={itemTransition}
         >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <MagneticButton
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            strength={0.3}
+          >
             <Link href="/music">
               <Button
                 size="lg"
@@ -177,8 +182,12 @@ export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
                 Listen Now
               </Button>
             </Link>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          </MagneticButton>
+          <MagneticButton
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            strength={0.3}
+          >
             <Link href="/about">
               <Button
                 variant="outline"
@@ -189,7 +198,7 @@ export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-          </motion.div>
+          </MagneticButton>
         </motion.div>
       </motion.div>
 

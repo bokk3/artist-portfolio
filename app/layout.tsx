@@ -4,8 +4,9 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import PageTransition from "@/components/page-transition";
+
 import { PlayerProvider } from "@/context/player-context";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Player } from "@/components/player";
 
 const outfit = Outfit({
@@ -110,30 +111,37 @@ export default function RootLayout({
         className={`${outfit.variable} font-sans antialiased bg-background text-foreground min-h-screen flex flex-col`}
         style={{ overflowX: "hidden" }}
       >
-        <PlayerProvider>
-          {/* Audio Visualizer Background - rendered in Player component */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          themes={["dark", "midnight", "rose"]}
+        >
+          <PlayerProvider>
+            {/* Audio Visualizer Background - rendered in Player component */}
 
-          <div id="app-content" className="flex flex-col min-h-screen">
-            {/* Navbar */}
-            <header className="fixed top-0 w-full z-50 glass-nav">
-              <Navbar />
-            </header>
+            <div id="app-content" className="flex flex-col min-h-screen">
+              {/* Navbar */}
+              <header className="fixed top-0 w-full z-50 glass-nav">
+                <Navbar />
+              </header>
 
-            <main className="flex-1 pt-16 pb-20 relative z-10">
-              <PageTransition>{children}</PageTransition>
-            </main>
+              <main className="flex-1 pt-16 pb-20 relative z-10">
+                {children}
+              </main>
 
-            {/* Footer - add bottom padding to account for player */}
-            <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20 mb-20">
-              <Footer />
-            </footer>
-          </div>
+              {/* Footer - add bottom padding to account for player */}
+              <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20 mb-20">
+                <Footer />
+              </footer>
+            </div>
 
-          {/* Persistent Player */}
-          <Player />
+            {/* Persistent Player */}
+            <Player />
 
-          <Toaster />
-        </PlayerProvider>
+            <Toaster />
+          </PlayerProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

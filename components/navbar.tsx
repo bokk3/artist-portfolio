@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/command";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 const navItems = [
   { name: "Music", href: "/music", icon: Music },
@@ -73,10 +75,17 @@ export function Navbar() {
             key={item.href}
             href={item.href}
             className={cn(
-              "text-sm font-medium transition-colors hover:text-primary",
+              "relative px-3 py-2 text-sm font-medium transition-colors hover:text-primary",
               pathname === item.href ? "text-primary" : "text-muted-foreground"
             )}
           >
+            {pathname === item.href && (
+              <motion.div
+                layoutId="navbar-active"
+                className="absolute inset-0 bg-primary/10 rounded-md -z-10"
+                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              />
+            )}
             {item.name}
           </Link>
         ))}
@@ -90,6 +99,8 @@ export function Navbar() {
           <Search className="h-5 w-5" />
           <span className="sr-only">Search</span>
         </Button>
+
+        <ThemeSwitcher />
       </div>
 
       {/* Mobile Nav */}
@@ -133,6 +144,15 @@ export function Navbar() {
                   {item.name}
                 </Link>
               ))}
+
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <p className="text-sm text-muted-foreground mb-4 font-medium">
+                  Theme
+                </p>
+                <div className="flex gap-4">
+                  <ThemeSwitcher />
+                </div>
+              </div>
             </div>
           </SheetContent>
         </Sheet>

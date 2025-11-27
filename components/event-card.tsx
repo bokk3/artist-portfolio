@@ -18,7 +18,7 @@ export function EventCard({ event }: { event: Event }) {
 
   return (
     <Card
-      className={`overflow-hidden border-border/10 ${
+      className={`overflow-hidden glass-card hover-lift ${
         isPast ? "opacity-60" : ""
       }`}
     >
