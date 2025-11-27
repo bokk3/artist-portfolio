@@ -240,6 +240,10 @@ Built with ❤️ in Belgium by [truyens.pro](https://truyens.pro)
 
 ## 📝 Changelog
 
+### v2.0.1 - Docker Build Fix
+
+- **Fixed**: Docker build error with Turbopack/webpack conflict by adding empty `turbopack: {}` config
+
 ### v2.0.0 - The Battle-Tested Portfolio 🚀
 
 **Visual Polish & Theming**
