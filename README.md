@@ -240,6 +240,38 @@ Built with ❤️ in Belgium by [truyens.pro](https://truyens.pro)
 
 ## 📝 Changelog
 
+### v2.0.0 - The Battle-Tested Portfolio 🚀
+
+**Visual Polish & Theming**
+
+- **New**: Glassmorphism design system with frosted glass effects across UI
+- **New**: Theme Switcher with 3 themes: Slate Gray (default), Midnight Neon, Rose Charcoal
+- **New**: Magnetic buttons with hover effects
+- **New**: Enhanced page transitions with spring animations
+- **New**: Kinetic typography (Marquee) for announcements
+- **New**: Subtle 3D starfield background
+- **Improved**: Audio visualizer - constrained to bottom 50%, smoother animations
+
+**Fan Engagement**
+
+- **New**: Guestbook with admin moderation queue (`/guestbook`, `/admin/guestbook`)
+- **New**: Unlockable Content component for newsletter exclusives
+- **New**: Email-gated high-res downloads on release pages
+
+**Commerce & EPK**
+
+- **New**: Merch Store with product grid (`/merch`)
+- **New**: Password-protected EPK (Electronic Press Kit) for industry (`/epk`)
+- **New**: High-res asset downloads for press
+
+**Technical Hardening & SEO**
+
+- **New**: Dynamic Open Graph image generation (`/api/og`)
+- **New**: JSON-LD schema for MusicGroup/Artist
+- **Improved**: Image optimization (AVIF/WebP)
+- **Improved**: Package imports optimization
+- **Fixed**: Footer rendering issue
+
 ### v1.3.0 - Battle-Tested Player & PWA
 
 - **New**: Battle-Tested Player with `localStorage` persistence and advanced queue management.
