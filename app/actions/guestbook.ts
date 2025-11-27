@@ -16,7 +16,7 @@ export async function submitGuestbookEntry(formData: FormData) {
   const result = guestbookSchema.safeParse({ name, message });
 
   if (!result.success) {
-    return { error: result.error.errors[0].message };
+    return { error: result.error.issues[0].message };
   }
 
   try {

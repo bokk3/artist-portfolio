@@ -240,6 +240,11 @@ Built with ❤️ in Belgium by [truyens.pro](https://truyens.pro)
 
 ## 📝 Changelog
 
+### v2.0.2 - Build Fixes
+
+- **Fixed**: TypeScript build errors (Zod v4 API, MagneticButton props, NODE_ENV types)
+- **Fixed**: Production build now completes successfully
+
 ### v2.0.1 - Docker Build Fix
 
 - **Fixed**: Docker build error with Turbopack/webpack conflict by adding empty `turbopack: {}` config

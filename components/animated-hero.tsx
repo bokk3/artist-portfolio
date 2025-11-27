@@ -168,11 +168,7 @@ export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
           variants={itemVariants}
           transition={itemTransition}
         >
-          <MagneticButton
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            strength={0.3}
-          >
+          <MagneticButton strength={0.3}>
             <Link href="/music">
               <Button
                 size="lg"
@@ -183,11 +179,8 @@ export function AnimatedHero({ latestRelease, heroImage }: HeroProps) {
               </Button>
             </Link>
           </MagneticButton>
-          <MagneticButton
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            strength={0.3}
-          >
+
+          <MagneticButton strength={0.3}>
             <Link href="/about">
               <Button
                 variant="outline"
