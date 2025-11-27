@@ -464,7 +464,7 @@ export function Player() {
   const playerUI = currentTrack ? (
     <div
       data-player="true"
-      className="bg-background/80 backdrop-blur-xl border-t border-border/10 flex items-center px-4 gap-4 shadow-lg relative"
+      className="glass-panel flex items-center px-4 gap-4 relative"
       style={
         {
           position: "fixed",
@@ -624,7 +624,7 @@ export function Player() {
               <Maximize2 className="h-5 w-5" />
             </Button>
           </DrawerTrigger>
-          <DrawerContent className="h-[90vh] bg-background/95 backdrop-blur-xl border-t border-border/10">
+          <DrawerContent className="h-[90vh] glass-panel border-b-0 rounded-t-[10px]">
             <DrawerHeader className="text-left">
               <DrawerTitle className="sr-only">Now Playing</DrawerTitle>
               <div className="flex justify-center mb-4">

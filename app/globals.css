@@ -149,7 +149,19 @@
 
 @layer utilities {
   .glass-panel {
-    @apply bg-card backdrop-blur-md border border-border;
+    @apply bg-background/60 backdrop-blur-xl border border-white/10 shadow-xl;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-lg hover:bg-white/10 transition-all duration-300;
+  }
+
+  .glass-button {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 active:bg-white/5 transition-all duration-200;
+  }
+
+  .glass-nav {
+    @apply bg-background/70 backdrop-blur-2xl border-b border-white/5;
   }
 
   .text-gradient {

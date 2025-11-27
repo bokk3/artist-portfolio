@@ -112,15 +112,21 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   const toggleShuffle = () => {
     setShuffle((prev) => {
-      if (!prev) {
+      const newShuffleState = !prev;
+      if (newShuffleState) {
         // Enable shuffle - create shuffled copy
-        const shuffled = [...playlist].sort(() => Math.random() - 0.5);
+        // Use Fisher-Yates shuffle
+        const shuffled = [...playlist];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
         setShuffledPlaylist(shuffled);
       } else {
         // Disable shuffle - clear shuffled list
         setShuffledPlaylist([]);
       }
-      return !prev;
+      return newShuffleState;
     });
   };
 
@@ -189,12 +195,19 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Update shuffled playlist when playlist changes
+  // Update shuffled playlist when playlist changes (add/remove tracks)
   useEffect(() => {
     if (shuffle && playlist.length > 0) {
-      const shuffled = [...playlist].sort(() => Math.random() - 0.5);
+      // Only re-shuffle if the playlist length or content actually changed
+      // For now, we just re-shuffle to keep it simple and consistent
+      const shuffled = [...playlist];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
       setShuffledPlaylist(shuffled);
     }
-  }, [playlist, shuffle]);
+  }, [playlist]); // Removed 'shuffle' from dependencies to avoid double-shuffle on toggle
 
   const removeTrack = (trackId: number) => {
     // Don't remove the currently playing track

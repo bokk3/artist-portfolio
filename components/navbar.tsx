@@ -55,12 +55,12 @@ export function Navbar() {
     <nav className="container mx-auto flex h-16 items-center justify-between px-4">
       {/* Logo */}
       <div className="flex items-center gap-2">
-      <Link
-        href="/"
-        className="font-display text-2xl font-bold tracking-tighter text-primary hover:text-primary/80 transition-colors"
-      >
-        ARTIST<span className="text-foreground">NAME</span>
-      </Link>
+        <Link
+          href="/"
+          className="font-display text-2xl font-bold tracking-tighter text-primary hover:text-primary/80 transition-colors"
+        >
+          ARTIST<span className="text-foreground">NAME</span>
+        </Link>
         <span className="text-xs text-muted-foreground/60 font-mono hidden sm:inline">
           v{process.env.NEXT_PUBLIC_APP_VERSION || "dev"}
         </span>
@@ -105,13 +105,17 @@ export function Navbar() {
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-12 w-12 touch-manipulation">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-12 w-12 touch-manipulation"
+            >
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
           <SheetContent
             side="right"
-            className="bg-background/95 backdrop-blur-xl border-l border-border/10"
+            className="glass-panel h-full border-r-0 rounded-l-[10px]"
           >
             <div className="flex flex-col gap-4 mt-10">
               {navItems.map((item) => (

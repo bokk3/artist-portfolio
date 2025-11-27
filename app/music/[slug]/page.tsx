@@ -15,14 +15,20 @@ async function getRelease(slug: string) {
   try {
     const tableInfo = db.prepare("PRAGMA table_info(releases)").all() as any[];
     const hasSlugColumn = tableInfo.some((col) => col.name === "slug");
-    
+
     if (!hasSlugColumn) {
-      console.error("❌ 'slug' column is missing from releases table. Please run: npm run db:migrate");
+      console.error(
+        "❌ 'slug' column is missing from releases table. Please run: npm run db:migrate"
+      );
       // Try to add the column and generate slugs
       try {
         db.exec(`ALTER TABLE releases ADD COLUMN slug TEXT`);
         // Generate slugs for existing releases
-        const releases = db.prepare("SELECT id, title FROM releases WHERE slug IS NULL OR slug = ''").all() as any[];
+        const releases = db
+          .prepare(
+            "SELECT id, title FROM releases WHERE slug IS NULL OR slug = ''"
+          )
+          .all() as any[];
         for (const release of releases) {
           const generatedSlug = release.title
             .toLowerCase()
@@ -30,23 +36,30 @@ async function getRelease(slug: string) {
             .replace(/\s+/g, "-")
             .replace(/--+/g, "-")
             .trim();
-          
+
           let uniqueSlug = generatedSlug;
           let counter = 1;
-          while (db.prepare("SELECT id FROM releases WHERE slug = ?").get(uniqueSlug)) {
+          while (
+            db.prepare("SELECT id FROM releases WHERE slug = ?").get(uniqueSlug)
+          ) {
             uniqueSlug = `${generatedSlug}-${counter}`;
             counter++;
           }
-          
-          db.prepare("UPDATE releases SET slug = ? WHERE id = ?").run(uniqueSlug, release.id);
+
+          db.prepare("UPDATE releases SET slug = ? WHERE id = ?").run(
+            uniqueSlug,
+            release.id
+          );
         }
         console.log("✅ Auto-migrated: Added slug column and generated slugs");
       } catch (migrationError) {
         console.error("❌ Failed to auto-migrate:", migrationError);
-        throw new Error("Database migration required. Please run: npm run db:migrate");
+        throw new Error(
+          "Database migration required. Please run: npm run db:migrate"
+        );
       }
     }
-    
+
     const stmt = db.prepare("SELECT * FROM releases WHERE slug = ?");
     return stmt.get(slug) as any;
   } catch (error) {
@@ -77,27 +90,37 @@ export async function generateMetadata({
   }
 
   // Get site URL from environment or construct from request
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://artist-portfolio.com";
+  const rawSiteUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://artist-portfolio.com";
+  const siteUrl = rawSiteUrl.replace(/["']/g, "").trim();
   const releaseUrl = `${siteUrl}/music/${slug}`;
-  const description = release.description || `${release.title} by ${release.artist}`;
+  const description =
+    release.description || `${release.title} by ${release.artist}`;
 
   // Convert relative image URL to absolute
   // Ensure the URL starts with / if it's relative, and make it absolute
   // WhatsApp requires HTTPS URLs
   let imageUrl: string | null = null;
   if (release.cover_image_url) {
-    if (release.cover_image_url.startsWith('http://') || release.cover_image_url.startsWith('https://')) {
+    if (
+      release.cover_image_url.startsWith("http://") ||
+      release.cover_image_url.startsWith("https://")
+    ) {
       // Force HTTPS for WhatsApp compatibility
-      imageUrl = release.cover_image_url.startsWith('https://') 
-        ? release.cover_image_url 
-        : release.cover_image_url.replace('http://', 'https://');
+      imageUrl = release.cover_image_url.startsWith("https://")
+        ? release.cover_image_url
+        : release.cover_image_url.replace("http://", "https://");
     } else {
       // Ensure it starts with / for proper URL construction
-      const imagePath = release.cover_image_url.startsWith('/') 
-        ? release.cover_image_url 
+      const imagePath = release.cover_image_url.startsWith("/")
+        ? release.cover_image_url
         : `/${release.cover_image_url}`;
       // Ensure HTTPS
-      const baseUrl = siteUrl.startsWith('https://') ? siteUrl : siteUrl.replace('http://', 'https://');
+      const baseUrl = siteUrl.startsWith("https://")
+        ? siteUrl
+        : siteUrl.replace("http://", "https://");
       imageUrl = `${baseUrl}${imagePath}`;
     }
   }
@@ -136,7 +159,9 @@ export async function generateMetadata({
           "og:image:width": "1200",
           "og:image:height": "1200",
           "og:image:type": "image/jpeg",
-          "og:image:secure_url": imageUrl.startsWith('https://') ? imageUrl : imageUrl.replace('http://', 'https://'),
+          "og:image:secure_url": imageUrl.startsWith("https://")
+            ? imageUrl
+            : imageUrl.replace("http://", "https://"),
         }
       : {},
   };
@@ -187,13 +212,12 @@ export default async function ReleasePage({
               <ShareButtons
                 title={`${release.title} by ${release.artist}`}
                 url={`/music/${release.slug}`}
-                description={release.description || `${release.title} by ${release.artist}`}
+                description={
+                  release.description || `${release.title} by ${release.artist}`
+                }
                 image={release.cover_image_url || ""}
               />
-              <EmbedPlayer
-                releaseId={release.id}
-                title={release.title}
-              />
+              <EmbedPlayer releaseId={release.id} title={release.title} />
             </div>
           </div>
         </div>
@@ -209,4 +233,3 @@ export default async function ReleasePage({
     </div>
   );
 }
-

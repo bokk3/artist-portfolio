@@ -6,7 +6,10 @@ export async function GET(request: NextRequest) {
   const slug = searchParams.get("slug");
 
   if (!slug) {
-    return NextResponse.json({ error: "Slug parameter required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Slug parameter required" },
+      { status: 400 }
+    );
   }
 
   const stmt = db.prepare("SELECT * FROM releases WHERE slug = ?");
@@ -16,20 +19,29 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Release not found" }, { status: 404 });
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://artist-portfolio.com";
-  
+  const rawSiteUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://artist-portfolio.com";
+  const siteUrl = rawSiteUrl.replace(/["']/g, "").trim();
+
   // Convert relative image URL to absolute
   let imageUrl: string | null = null;
   if (release.cover_image_url) {
-    if (release.cover_image_url.startsWith('http://') || release.cover_image_url.startsWith('https://')) {
-      imageUrl = release.cover_image_url.startsWith('https://') 
-        ? release.cover_image_url 
-        : release.cover_image_url.replace('http://', 'https://');
+    if (
+      release.cover_image_url.startsWith("http://") ||
+      release.cover_image_url.startsWith("https://")
+    ) {
+      imageUrl = release.cover_image_url.startsWith("https://")
+        ? release.cover_image_url
+        : release.cover_image_url.replace("http://", "https://");
     } else {
-      const imagePath = release.cover_image_url.startsWith('/') 
-        ? release.cover_image_url 
+      const imagePath = release.cover_image_url.startsWith("/")
+        ? release.cover_image_url
         : `/${release.cover_image_url}`;
-      const baseUrl = siteUrl.startsWith('https://') ? siteUrl : siteUrl.replace('http://', 'https://');
+      const baseUrl = siteUrl.startsWith("https://")
+        ? siteUrl
+        : siteUrl.replace("http://", "https://");
       imageUrl = `${baseUrl}${imagePath}`;
     }
   }
@@ -45,8 +57,8 @@ export async function GET(request: NextRequest) {
       releaseUrl: `${siteUrl}/music/${slug}`,
       imageUrl,
       imageUrlOriginal: release.cover_image_url,
-      imageIsAbsolute: release.cover_image_url?.startsWith('http'),
-      imageIsHttps: imageUrl?.startsWith('https://'),
+      imageIsAbsolute: release.cover_image_url?.startsWith("http"),
+      imageIsHttps: imageUrl?.startsWith("https://"),
     },
     environment: {
       NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -54,4 +66,3 @@ export async function GET(request: NextRequest) {
     },
   });
 }
-

@@ -18,10 +18,12 @@ const outfit = Outfit({
 // For this implementation, we will assume Clash Display is loaded via CSS or we can use a similar Google Font like 'Syne' as a temporary fallback if needed,
 // but the rules say "Clash Display". We will add a class for it.
 
-const siteUrl =
+const rawSiteUrl =
   process.env.NEXT_PUBLIC_BASE_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
   "https://artist-portfolio.com";
+
+const siteUrl = rawSiteUrl.replace(/["']/g, "").trim();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -113,7 +115,7 @@ export default function RootLayout({
 
           <div id="app-content" className="flex flex-col min-h-screen">
             {/* Navbar */}
-            <header className="fixed top-0 w-full z-50 border-b border-border/10 bg-background/80 backdrop-blur-md">
+            <header className="fixed top-0 w-full z-50 glass-nav">
               <Navbar />
             </header>
 
