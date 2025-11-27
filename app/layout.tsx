@@ -131,9 +131,10 @@ export default function RootLayout({
               </main>
 
               {/* Footer - add bottom padding to account for player */}
-              <footer className="border-t border-border/10 py-8 text-center text-muted-foreground bg-muted/20 mb-20">
+              {/* Footer - add bottom padding to account for player */}
+              <div className="mb-20">
                 <Footer />
-              </footer>
+              </div>
             </div>
 
             {/* Persistent Player */}
@@ -141,6 +142,27 @@ export default function RootLayout({
 
             <Toaster />
           </PlayerProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "MusicGroup",
+                name: "Artist Name",
+                url: "https://artist-portfolio.com",
+                logo: "https://artist-portfolio.com/logo.png",
+                sameAs: [
+                  "https://instagram.com/artisthandle",
+                  "https://twitter.com/artisthandle",
+                  "https://youtube.com/artisthandle",
+                  "https://soundcloud.com/artisthandle",
+                ],
+                genre: "Electronic",
+                description:
+                  "Electronic Music Producer & Sound Designer pushing boundaries through sound.",
+              }),
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

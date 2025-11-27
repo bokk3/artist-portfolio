@@ -4,6 +4,9 @@ import { ShareButtons } from "@/components/share-buttons";
 import { EmbedPlayer } from "@/components/embed-player";
 import { AlbumArtPlayer } from "@/components/album-art-player";
 import { PlayAlbumButton } from "@/components/play-album-button";
+import { UnlockableContent } from "@/components/unlockable-content";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -228,6 +231,27 @@ export default async function ReleasePage({
             Tracklist
           </h2>
           <TrackList tracks={tracks} coverImage={release.cover_image_url} />
+
+          {/* Exclusive Content */}
+          <div className="mt-12">
+            <UnlockableContent contentId={`release-${release.id}-bonus`}>
+              <div className="bg-card/50 border border-border/50 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-bold mb-1">
+                    High-Res Audio Download
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    Get the FLAC and WAV versions of this release, plus
+                    exclusive artwork.
+                  </p>
+                </div>
+                <Button variant="outline" className="gap-2 whitespace-nowrap">
+                  <Download className="w-4 h-4" />
+                  Download Assets
+                </Button>
+              </div>
+            </UnlockableContent>
+          </div>
         </div>
       </div>
     </div>
